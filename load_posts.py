@@ -8,10 +8,10 @@ import django
 
 django.setup()
 
-from recsys.models import Page
+from reviews.models import Page, Post
 
 
-def save_page_from_row(page_row):
+def save_post_from_row(page_row):
     page = Page()
     page.name = page_row[0]
     page.id = page_row[1]
@@ -22,15 +22,15 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2:
         print("Reading from file " + str(sys.argv[1]))
-        pages_df = pd.read_csv(sys.argv[1])
-        print(pages_df.head())
+        reviews_df = pd.read_csv(sys.argv[1])
+        print(reviews_df.head())
 
-        pages_df.apply(
-            save_page_from_row,
+        reviews_df.apply(
+            save_post_from_row,
             axis=1
         )
 
-        print("There are {} pages in DB".format(Page.objects.count()))
+        print("There are {} reviews in DB".format(Page.objects.count()))
 
     else:
-        print("Please, provide Pages file path")
+        print("Please, provide Reviews file path")
