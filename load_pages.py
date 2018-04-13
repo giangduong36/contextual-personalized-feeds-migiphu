@@ -18,9 +18,16 @@ def save_page_from_row(page_row):
     page.save()
 
 
+def delete_db():
+    print('truncate db')
+    Page.objects.all().delete()
+    print('finished truncate db')
+
+
 if __name__ == "__main__":
 
     if len(sys.argv) == 2:
+        delete_db()
         print("Reading from file " + str(sys.argv[1]))
         pages_df = pd.read_csv(sys.argv[1])
         print(pages_df.head())

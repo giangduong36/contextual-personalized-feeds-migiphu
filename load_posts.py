@@ -8,29 +8,55 @@ import django
 
 django.setup()
 
-from reviews.models import Page, Post
+from recsys.models import Post, Page
+from django.utils import dateparse, timezone
 
 
-def save_post_from_row(page_row):
-    page = Page()
-    page.name = page_row[0]
-    page.id = page_row[1]
-    page.save()
+def save_post_from_row(post_row):
+    post = Post()
+    post.created_time = post_row[0]
+    post.description = post_row[1]
+    post.link = post_row[2]
+    post.message = post_row[3]
+    post.page_id = Page.objects.get(id=post_row[4])
+    post.post_id = post_row[5]
+    post.react_angry = post_row[6]
+    post.react_haha = post_row[7]
+    post.react_like = post_row[8]
+    post.react_love = post_row[9]
+    post.react_sad = post_row[10]
+    post.react_wow = post_row[11]
+    post.scrape_time = post_row[12]
+    post.shares = post_row[13]
+    post.save()
+
+
+def delete_db():
+    print('truncate db')
+    Post.objects.all().delete()
+    print('finished truncate db')
 
 
 if __name__ == "__main__":
 
     if len(sys.argv) == 2:
-        print("Reading from file " + str(sys.argv[1]))
-        reviews_df = pd.read_csv(sys.argv[1])
-        print(reviews_df.head())
 
-        reviews_df.apply(
+        delete_db()
+        print("Reading from file " + str(sys.argv[1]))
+        posts_df = pd.read_csv(sys.argv[1])
+
+        timezone.localtime(timezone.now())
+        # for index, row in posts_df.head().iteritems():
+        #     print(dateparse.parse_datetime(row.scrape_time, locals()))
+
+        # WARNING: Naive date time error while time zone support is active
+        # (scrape_time does not have any time zone specified)
+        posts_df.apply(
             save_post_from_row,
             axis=1
         )
 
-        print("There are {} reviews in DB".format(Page.objects.count()))
+        print("There are {} posts in DB".format(Post.objects.count()))
 
     else:
-        print("Please, provide Reviews file path")
+        print("Please, provide Posts file path")
