@@ -6,8 +6,8 @@ from .models import Post, Page
 
 
 def post_list(request):
-    latest_post_list = Post.objects.all()
-    context = {'latest_post_list':latest_post_list}
+    latest_post_list = Post.objects.order_by('created_time')[:10]
+    context = {'latest_post_list': latest_post_list}
     return render(request, 'recsys/post_list.html', context)
 
 

@@ -9,8 +9,6 @@ import django
 django.setup()
 
 from recsys.models import Post, Page
-from django.utils import dateparse, timezone
-
 
 def save_post_from_row(post_row):
     post = Post()
@@ -19,7 +17,7 @@ def save_post_from_row(post_row):
     post.link = post_row[2]
     post.message = post_row[3]
     post.page_id = Page.objects.get(id=post_row[4])
-    post.post_id = post_row[5]
+    post.id = post_row[5]
     post.react_angry = post_row[6]
     post.react_haha = post_row[7]
     post.react_like = post_row[8]
@@ -45,17 +43,12 @@ if __name__ == "__main__":
         print("Reading from file " + str(sys.argv[1]))
         posts_df = pd.read_csv(sys.argv[1])
 
-        timezone.localtime(timezone.now())
-        # for index, row in posts_df.head().iteritems():
-        #     print(dateparse.parse_datetime(row.scrape_time, locals()))
-
         # WARNING: Naive date time error while time zone support is active
         # (scrape_time does not have any time zone specified)
         posts_df.apply(
             save_post_from_row,
             axis=1
         )
-
         print("There are {} posts in DB".format(Post.objects.count()))
 
     else:

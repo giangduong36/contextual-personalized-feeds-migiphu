@@ -1,3 +1,6 @@
 # Large datasets #
 *.csv
 *.pyc
+*.sqlite3
+
+recsys/migrations/*

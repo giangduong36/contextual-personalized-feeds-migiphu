@@ -5,8 +5,9 @@ from . import views
 
 urlpatterns = [
     # ex: /
-    url(r'^$', views.post_list, name='post_list'),
+    url(r'^post', views.post_list, name='post_list'),
     # ex: /review/5/
+    # post_id_orig or not
     url(r'^post/(?P<post_id>[0-9]+)/$', views.post_detail, name='post_detail'),
     # ex: /wine/
     url(r'^page', views.page_list, name='page_list'),
