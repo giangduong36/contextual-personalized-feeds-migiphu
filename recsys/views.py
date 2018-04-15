@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.http import Http404
+
 
 # Create your views here.
 
@@ -6,13 +8,17 @@ from .models import Post, Page
 
 
 def post_list(request):
-    latest_post_list = Post.objects.order_by('created_time')[:10]
+    latest_post_list = Post.objects.order_by('created_time')[:50]
     context = {'latest_post_list': latest_post_list}
     return render(request, 'recsys/post_list.html', context)
 
 
 def post_detail(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
+    try:
+        post = Post.objects.get(id=post_id)
+    except Post.DoesNotExist:
+        raise Http404("Post does not exist")
+
     return render(request, 'recsys/post_detail.html', {'post': post})
 
 

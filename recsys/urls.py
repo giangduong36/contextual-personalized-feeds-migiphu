@@ -3,14 +3,14 @@ from django.urls import path
 
 from . import views
 
+app_name = 'recsys'
+
 urlpatterns = [
-    # ex: /
-    url(r'^post', views.post_list, name='post_list'),
-    # ex: /review/5/
-    # post_id_orig or not
-    url(r'^post/(?P<post_id>[0-9]+)/$', views.post_detail, name='post_detail'),
-    # ex: /wine/
-    url(r'^page', views.page_list, name='page_list'),
-    # ex: /wine/5/
-    url(r'^page/(?P<page_id>[0-9]+)/$', views.page_detail, name='page_detail'),
+    path('post/', views.post_list, name='post_list'),
+    # ex: /post/5/
+    path('post/<post_id>/', views.post_detail, name='post_detail'),
+
+    path('page/', views.page_list, name='page_list'),
+    # ex: /page/5/
+    path('page/<page_id>/', views.page_detail, name='page_detail'),
 ]
