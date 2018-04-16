@@ -5,5 +5,9 @@
 {% endblock %}
 
 {% block content %}
-<h4> {{post.message}}</h4>
+
+{% for field in form %}
+            <h4>{{ field.label }} : {{field.value}}</h4>
+{% endfor %}
+
 {% endblock %}

@@ -6,6 +6,7 @@ from . import views
 app_name = 'recsys'
 
 urlpatterns = [
+    path('', views.post_list, name='post_list'),
     path('post/', views.post_list, name='post_list'),
     # ex: /post/5/
     path('post/<post_id>/', views.post_detail, name='post_detail'),

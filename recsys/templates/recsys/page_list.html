@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}
+<h2>Page list</h2>
+{% endblock %}
+
+{% block content %}
+{% if latest_page_list %}
+<div class="row">
+    {% for page in latest_page_list %}
+    <div class="col-xs-6 col-lg-4">
+        <h4><a href="{% url 'recsys:page_detail' page.id %}">
+        {{ page.name }}
+        </a></h4>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p>No pages are available.</p>
+{% endif %}
+{% endblock %}
