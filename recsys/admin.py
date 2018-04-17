@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Page, Post, Comment
+from .models import *
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -21,6 +21,13 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = []
 
 
+class UserTestAdmin(admin.ModelAdmin):
+    model = Comment
+    list_display = ['id', 'name']
+    list_filter = []
+
+
 admin.site.register(Page, PageAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comment, CommentAdmin)
+admin.site.register(UserTest, UserTestAdmin)

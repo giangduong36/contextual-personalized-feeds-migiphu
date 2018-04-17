@@ -6,7 +6,7 @@ from django.forms import ModelForm
 
 # Create your views here.
 
-from .models import Post, Page, Comment
+from .models import *
 
 
 def post_list(request):
@@ -41,10 +41,28 @@ def page_detail(request, page_id):
         page = Page.objects.get(id=page_id)
         posts_of_page = Post.objects.filter(page_id=page)   # All posts that belong to this page
         context = {'latest_post_list': posts_of_page, 'page_name': page.name}
-    except posts_of_page.DoesNotExist:
+    except Page.DoesNotExist:
         raise Http404("Post does not exist")
 
     return render(request, 'recsys/page_detail.html', context)
+
+
+def user_list(request):
+    all_user_tests = UserTest.objects.all()[:100]
+    context = {'user_list': all_user_tests}
+    return render(request, 'recsys/user_list.html', context)
+
+
+def user_detail(request, user_id):
+    try:
+        user = UserTest.objects.get(id=user_id)
+        comments = Comment.objects.filter(from_id=user_id)
+        # All comments that this user wrote
+        context = {'comment_list': comments, 'user_name': user.name}
+    except UserTest.DoesNotExist:
+        raise Http404("Post does not exist")
+
+    return render(request, 'recsys/user_detail.html', context)
 
 
 def comment_list(request):

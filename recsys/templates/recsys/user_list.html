@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<h2>List of 100 users</h2>
+{% endblock %}
+
+{% block content %}
+{% if user_list %}
+<div class="row">
+    {% for user in user_list %}
+    <div class="col-xs-6 col-lg-4">
+        <h4><a href="{% url 'recsys:user_detail' user.id %}">
+        {{ user.name }}
+        </a></h4>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p>No users are available.</p>
+{% endif %}
+{% endblock %}

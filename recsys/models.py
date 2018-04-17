@@ -1,6 +1,7 @@
 from django.db import models
 import numpy as np
 
+
 # Create your models here.
 
 
@@ -33,7 +34,14 @@ class Post(models.Model):
 
 class Comment(models.Model):
     created_time = models.DateTimeField('created time', blank=True, null=True)
-    from_id = models.CharField(max_length=200, blank=True, null=True)   # user's id
-    from_name = models.CharField(max_length=200, blank=True, null=True) # user's public name
+    from_id = models.CharField(max_length=200, blank=True, null=True)  # user's id
+    from_name = models.CharField(max_length=200, blank=True, null=True)  # user's public name
     message = models.CharField(max_length=2000, blank=True, null=True)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, blank=True, null=True)
+
+
+# A convenient and quick model to represent users from the existing database.
+# Creating user authentication for all users in the database is time-consuming
+class UserTest(models.Model):
+    id = models.CharField(max_length=100, primary_key=True)
+    name = models.CharField(max_length=200, blank=True, null=True)  # user's public name

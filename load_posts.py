@@ -1,6 +1,5 @@
 import sys, os
 import pandas as pd
-import datetime
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "recsys440.settings")
 
@@ -9,6 +8,7 @@ import django
 django.setup()
 
 from recsys.models import Post, Page
+
 
 def save_post_from_row(post_row):
     post = Post()
