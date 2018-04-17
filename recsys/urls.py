@@ -6,7 +6,7 @@ from . import views
 app_name = 'recsys'
 
 urlpatterns = [
-    path('', views.post_list, name='post_list'),
+    path('', views.post_list, name='home'),
     path('post/', views.post_list, name='post_list'),
     # ex: /post/5/
     path('post/<post_id>/', views.post_detail, name='post_detail'),
@@ -14,4 +14,8 @@ urlpatterns = [
     path('page/', views.page_list, name='page_list'),
     # ex: /page/5/
     path('page/<page_id>/', views.page_detail, name='page_detail'),
+
+    path('user/', views.user_list, name='user_list'),
+    path('user/<user_id>/', views.user_detail, name='user_detail'),
+
 ]

@@ -1,34 +1,30 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<h2>Post content</h2>
+<h2>Comments of {{user_name}}</h2>
 {% endblock %}
 
 {% block content %}
-
-{% for field in form %}
-<h4>{{ field.label }} : {{field.value}}</h4>
-{% endfor %}
-
-<h2> Comments for this post: </h2>
-
-{% if comments %}
+{% if comment_list %}
 
 <div class="table-responsive">
     <table class="table">
         <thead>
         <tr>
             <th>Created time</th>
-            <th>User's name</th>
             <th>Message</th>
+            <th>Post content</th>
+            <th>Post id</th>
         </tr>
         </thead>
-        {% for comment in comments %}
+        {% for comment in comment_list %}
         <tbody>
         <tr>
             <td>{{ comment.created_time }}</td>
-            <td>{{ comment.from_name }}</td>
             <td>{{ comment.message }}</td>
+            <td>{{ comment.post_id.message }}</td>
+            <td><a href="{% url 'recsys:post_detail' comment.post_id.id %}">
+                {{ comment.post_id.id }} </a></td>
         </tr>
         </tbody>
         {% endfor %}
@@ -36,7 +32,6 @@
 </div>
 
 {% else %}
-<p>No posts are available.</p>
+<p>No comments are available for this user.</p>
 {% endif %}
-
 {% endblock %}

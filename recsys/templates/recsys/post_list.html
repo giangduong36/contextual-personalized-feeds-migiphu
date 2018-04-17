@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-<h2>Latest reviews</h2>
+<h2>Latest posts</h2>
 {% endblock %}
 
 {% block content %}
@@ -10,12 +10,14 @@
     {% for post in latest_post_list %}
     <div class="col-sm-6">
         <h4><a href="{% url 'recsys:post_detail' post.id%}">
-        {{ post.message }}
+            {{ post.message }}
         </a></h4>
     </div>
     {% endfor %}
-</div>
+    </div>
+
+
 {% else %}
-<p>No reviews are available.</p>
+<p>No posts are available.</p>
 {% endif %}
 {% endblock %}
