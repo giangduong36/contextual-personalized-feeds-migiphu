@@ -7,7 +7,38 @@
 {% block content %}
 
 {% for field in form %}
-            <h4>{{ field.label }} : {{field.value}}</h4>
+<h4>{{ field.label }} : {{field.value}}</h4>
 {% endfor %}
+
+<h2> Comments for this post: </h2>
+
+{% if comments %}
+<div class="row">
+    <div class="col-sm-2 " style="background-color:lavender;">
+        Created_time
+    </div>
+    <div class="col-sm-4" style="background-color:lavenderblush;">
+        User's name
+    </div>
+    <div class="col-sm-6" style="background-color:lavender;">
+        Message
+    </div>
+
+    {% for comment in comments %}
+        <div class="col-sm-2 " style="background-color:lavender;">
+            {{ comment.created_time }}
+        </div>
+        <div class="col-sm-4" style="background-color:lavenderblush;">
+            {{ comment.from_name }}
+        </div>
+        <div class="col-sm-6" style="background-color:lavender;">
+            {{ comment.message}}
+        </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<p>No posts are available.</p>
+{% endif %}
 
 {% endblock %}
