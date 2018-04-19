@@ -17,5 +17,6 @@ urlpatterns = [
 
     path('user/', views.user_list, name='user_list'),
     path('user/<user_id>/', views.user_detail, name='user_detail'),
+    path('user/<user_id>/recommended_posts/', views.user_recommended_post, name='user_recommended_posts')
 
 ]

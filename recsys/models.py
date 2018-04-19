@@ -45,3 +45,7 @@ class Comment(models.Model):
 class UserTest(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=200, blank=True, null=True)  # user's public name
+
+
+class SuggestPost(models.Model):
+    pass

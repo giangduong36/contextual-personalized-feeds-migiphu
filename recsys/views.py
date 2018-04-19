@@ -1,33 +1,15 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
-from django.forms.models import model_to_dict
+from django.db.models import Count
 from django.forms import ModelForm
-
+import pandas as pd
+# from .recommender import doc2vec_recommender, tfidf_recommender
 
 # Create your views here.
 
 from .models import *
 
-
-def post_list(request):
-    latest_post_list = Post.objects.order_by('created_time')[:50]
-    context = {'latest_post_list': latest_post_list}
-    return render(request, 'recsys/post_list.html', context)
-
-
-def post_detail(request, post_id):
-    class PostForm(ModelForm):
-        class Meta:
-            model = Post
-            fields = '__all__'
-    try:
-        post = Post.objects.get(id=post_id)
-        form = PostForm(instance=post)
-        comments = Comment.objects.filter(post_id = post)
-    except Post.DoesNotExist:
-        raise Http404("Post does not exist")
-
-    return render(request, 'recsys/post_detail.html', {'form': form, 'comments': comments})
+"""View a list of all pages"""
 
 
 def page_list(request):
@@ -36,15 +18,49 @@ def page_list(request):
     return render(request, 'recsys/page_list.html', context)
 
 
+"""View all posts of a page"""
+
+
 def page_detail(request, page_id):
     try:
         page = Page.objects.get(id=page_id)
-        posts_of_page = Post.objects.filter(page_id=page)   # All posts that belong to this page
+        posts_of_page = Post.objects.filter(page_id=page)  # All posts that belong to this page
         context = {'latest_post_list': posts_of_page, 'page_name': page.name}
     except Page.DoesNotExist:
         raise Http404("Post does not exist")
 
     return render(request, 'recsys/page_detail.html', context)
+
+
+"""View a list of all posts"""
+
+
+def post_list(request):
+    latest_post_list = Post.objects.order_by('created_time')[:50]
+    context = {'latest_post_list': latest_post_list}
+    return render(request, 'recsys/post_list.html', context)
+
+
+"""View information and comments of a post"""
+
+
+def post_detail(request, post_id):
+    class PostForm(ModelForm):
+        class Meta:
+            model = Post
+            fields = '__all__'
+
+    try:
+        post = Post.objects.get(id=post_id)
+        form = PostForm(instance=post)
+        comments = Comment.objects.filter(post_id=post)
+    except Post.DoesNotExist:
+        raise Http404("Post does not exist")
+
+    return render(request, 'recsys/post_detail.html', {'form': form, 'comments': comments})
+
+
+"""View a list of all users"""
 
 
 def user_list(request):
@@ -53,16 +69,41 @@ def user_list(request):
     return render(request, 'recsys/user_list.html', context)
 
 
+"""View all comments of an user"""
+
+
 def user_detail(request, user_id):
     try:
         user = UserTest.objects.get(id=user_id)
         comments = Comment.objects.filter(from_id=user_id)
         # All comments that this user wrote
-        context = {'comment_list': comments, 'user_name': user.name}
+        context = {'comment_list': comments,
+                   'user_name': user.name,
+                   'user_id': user_id}
     except UserTest.DoesNotExist:
         raise Http404("Post does not exist")
 
     return render(request, 'recsys/user_detail.html', context)
+
+
+def user_recommended_post(request, user_id):
+    user_comments = Comment.objects.filter(from_id=user_id)
+    user_comments_post_id = set(map(lambda x: x.post_id.id, user_comments))
+    tfidf_rec = pd.read_csv('data/fb_news_posts_20K_tfidf.csv')
+
+    most_similar = tfidf_rec.loc[tfidf_rec['post_id'].isin(user_comments_post_id)]
+
+    rec_posts_ids = []
+    for i in most_similar['most_similar'].tolist():
+        most_similar_ids = (i[1:-1].split(','))
+        most_similar_ids = [i.replace(" ", "").replace('\'', "") for i in most_similar_ids]
+        rec_posts_ids.extend(most_similar_ids)
+
+    rec_posts = Post.objects.filter(pk__in=rec_posts_ids)
+
+    context = {'rec_posts': rec_posts,
+               'user_name': UserTest.objects.get(pk=user_id).name}
+    return render(request, 'recsys/user_recommended_post.html', context)
 
 
 def comment_list(request):

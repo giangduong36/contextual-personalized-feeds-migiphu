@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<h2>Recommended posts for user {{user_name}}</h2>
+{% endblock %}
+
+{% block content %}
+{% if rec_posts %}
+<div class="row">
+    {% for post in rec_posts %}
+    <div class="col-sm-6">
+        <h4><a href="{% url 'recsys:post_detail' post.id%}">
+        {{ post.message }}
+        </a></h4>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% else %}
+<p>No posts are available for this page.</p>
+
+{% endif %}
+{% endblock %}
