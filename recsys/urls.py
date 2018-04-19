@@ -18,4 +18,5 @@ urlpatterns = [
     path('user/', views.user_list, name='user_list'),
     path('user/<user_id>/', views.user_detail, name='user_detail'),
 
+    path('clrec/', views.recommendation_CL, name='recommendation_CL')
 ]

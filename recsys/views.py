@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.forms.models import model_to_dict
 from django.forms import ModelForm
-
+from .collaborative_filter import update_filter
 
 # Create your views here.
 
@@ -71,3 +71,31 @@ def comment_list(request):
 
 def comment_detail(request, comment_id):
     pass
+
+# Recommendation using item-item collaborative filtering
+def recommendation_CL(request):
+    user_id = 10155675667923755 #remove this later?
+    user_comments = Comment.objects.filter(from_id=user_id).order_by('created_time')
+    user_posts = list(map(lambda x: x.post_id.id, user_comments))
+    latest_post_id = user_posts[0]
+    latest_post = Post.objects.get(id=latest_post_id)
+    print(latest_post)
+
+    try:
+        similarities = CosineSimilarity.objects.get(source_id=latest_post) \
+                    .exclude(target_id__in=user_posts) \
+                    .order_by('similarity')
+    except:
+        update_filter()
+        similarities = CosineSimilarity.objects.get(source_id=latest_post) \
+                    .exclude(target_i__in=user_posts) \
+                    .order_by('similarity')
+    similar_post_ids = set(map(lambda x: x.target_id.id, similarities))
+    similar_posts = Post.objects.filter(id__in=similar_post_ids)
+
+    context = {'user_name': user.name, 'latest_post_list': similar_posts}
+    return render(
+        request,
+        'recsys/recommendation_CL.html',
+        context
+    )

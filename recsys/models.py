@@ -45,3 +45,10 @@ class Comment(models.Model):
 class UserTest(models.Model):
     id = models.CharField(max_length=100, primary_key=True)
     name = models.CharField(max_length=200, blank=True, null=True)  # user's public name
+
+
+class CosineSimilarity(models.Model):
+    created_time = models.DateTimeField('created_time', blank=True, null=True)
+    source_id = models.CharField(max_length=100, blank=True, null=True) #characters id of post
+    target_id = models.CharField(max_length=100, blank=True, null=True)
+    similarity = models.DecimalField(max_digits=5, decimal_places=5, blank=True, null=True)
