@@ -8,6 +8,9 @@
 {% if comment_list %}
 
 <div class="table-responsive">
+    <h2><a href="{% url 'recsys:user_recommended_posts' user_id%}">
+        Recommended posts for {{ user_name }} </a></h2>
+
     <table class="table">
         <thead>
         <tr>
