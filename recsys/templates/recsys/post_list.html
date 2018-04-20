@@ -14,7 +14,11 @@
     {% for post in latest_post_list %}
     <div class="col-sm-6">
         <h4><a href="{% url 'recsys:post_detail' post.id%}">
-            {{ post.message }}
+            {% if post.message == "nan" %}
+                {{ post.description }}
+            {% else %}
+                {{ post.message }}
+            {% endif %}
         </a></h4>
     </div>
     {% endfor %}
