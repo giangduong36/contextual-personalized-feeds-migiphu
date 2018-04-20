@@ -4,8 +4,6 @@ from sklearn.metrics.pairwise import *
 from scipy.sparse import dok_matrix, csr_matrix
 import numpy as np
 
-import sys
-
 def update_filter():
     # Create a sparse matrix of user - post
     # element[i][j] filled with 1 when a user i comment on post j
@@ -15,7 +13,7 @@ def update_filter():
     num_posts = len(all_post_ids)
 
     comment_matrix = dok_matrix((num_users, num_posts), dtype=np.float32)
-    for i in range(num_users): 
+    for i in range(num_users):
         user_comments = Comment.objects.filter(from_name=all_user_names[i])
         for user_comment in user_comments:
             j = all_post_ids.index(user_comment.post_id.id)

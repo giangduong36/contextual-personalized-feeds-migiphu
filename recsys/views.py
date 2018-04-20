@@ -2,12 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.db.models import Count
 from django.forms import ModelForm
-<<<<<<< HEAD
 from .collaborative_filter import update_filter
-=======
 import pandas as pd
 # from .recommender import doc2vec_recommender, tfidf_recommender
->>>>>>> bcb5f20212eb2626ba6fc82c429c30de055db171
 
 # Create your views here.
 
