@@ -3,6 +3,10 @@
 {% bootstrap_css %}
 {% bootstrap_javascript %}
 
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'recsys/style.css' %}">
+
 {% block bootstrap3_content %}
 <div class="container">
     <nav class="navbar navbar-default">
