@@ -7,13 +7,17 @@
 {% block content %}
 {% if latest_page_list %}
 <div class="row">
-    {% for page in latest_page_list %}
-    <div class="col-xs-6 col-lg-4">
-        <h4><a href="{% url 'recsys:page_detail' page.id %}">
-        {{ page.name }}
-        </a></h4>
+  {% for page in latest_page_list %}
+  <div class="col-sm-2">
+        <div class="thumbnail" style="border: 0 none; box-shadow: none;">
+      <div class="caption">
+        <img src="http://graph.facebook.com/{{page.id}}/picture?type=square">
+        <h6>{{ page.name }}</h6>
+        <p><a href="{% url 'recsys:page_detail' page.id%}">Read More</a></p>
+      </div>
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
 {% else %}
     <p>No pages are available.</p>
