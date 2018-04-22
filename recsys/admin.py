@@ -27,7 +27,13 @@ class UserTestAdmin(admin.ModelAdmin):
     list_filter = []
 
 
+class CosineSimilarityAdmin(admin.ModelAdmin):
+    model = CosineSimilarity
+    list_display = ['source_id', 'target_id', 'id']
+
+
 admin.site.register(Page, PageAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(UserTest, UserTestAdmin)
+admin.site.register(CosineSimilarity, CosineSimilarityAdmin)

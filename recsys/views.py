@@ -5,6 +5,8 @@ from django.forms import ModelForm
 from .collaborative_filter import update_filter
 import pandas as pd
 # from .recommender import doc2vec_recommender, tfidf_recommender
+# logging to the console for debug
+import sys
 
 # Create your views here.
 
@@ -101,7 +103,6 @@ def user_recommended_post(request, user_id):
         rec_posts_ids.extend(most_similar_ids)
 
     rec_posts = Post.objects.filter(pk__in=rec_posts_ids)
-
     context = {'rec_posts': rec_posts,
                'user_name': UserTest.objects.get(pk=user_id).name}
     return render(request, 'recsys/user_recommended_post.html', context)
@@ -119,26 +120,24 @@ def comment_detail(request, comment_id):
 def recommendation_CL(request):
     user_id = 10155675667923755 #remove this later?
     user_comments = Comment.objects.filter(from_id=user_id).order_by('created_time')
-    user_posts = list(map(lambda x: x.post_id.id, user_comments))
-    latest_post_id = user_posts[0]
+    user_posts_ids = list(map(lambda x: x.post_id.id, user_comments))
+    latest_post_id = user_posts_ids[0]
     latest_post = Post.objects.get(id=latest_post_id)
-    print(latest_post)
+    rec_posts = Post.objects.filter(id__in=user_posts_ids)
 
-    try:
-        similarities = CosineSimilarity.objects.get(source_id=latest_post) \
-                    .exclude(target_id__in=user_posts) \
-                    .order_by('similarity')
-    except:
+    comparable = CosineSimilarity.objects.filter(source_id=latest_post_id)
+    if not comparable:
         update_filter()
-        similarities = CosineSimilarity.objects.get(source_id=latest_post) \
-                    .exclude(target_i__in=user_posts) \
-                    .order_by('similarity')
-    similar_post_ids = set(map(lambda x: x.target_id.id, similarities))
-    similar_posts = Post.objects.filter(id__in=similar_post_ids)
-
-    context = {'user_name': user.name, 'latest_post_list': similar_posts}
+    similarities = CosineSimilarity.objects.filter(source_id=latest_post_id) \
+                    .exclude(target_id__in=user_posts_ids).order_by('-similarity')
+    rec_posts_ids = list(map(lambda x: x.target_id, similarities))
+    rec_posts = []
+    for id in rec_posts_ids:
+        rec_posts.append(Post.objects.get(id=id))
+    context = {'rec_posts': rec_posts,
+            'user_name': UserTest.objects.get(id=user_id).name}
     return render(
         request,
-        'recsys/recommendation_CL.html',
+        'recsys/user_recommended_post.html',
         context
     )

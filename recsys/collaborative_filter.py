@@ -1,8 +1,9 @@
-from .models import Post, Comment, UserTest
+from .models import Post, Comment, UserTest, CosineSimilarity
 from django.contrib.auth.models import User
 from sklearn.metrics.pairwise import *
 from scipy.sparse import dok_matrix, csr_matrix
 import numpy as np
+import sys
 
 def update_filter():
     # Create a sparse matrix of user - post
@@ -11,18 +12,24 @@ def update_filter():
     all_post_ids = list(map(lambda x: x.id, Post.objects.all()))
     num_users = len(all_user_names)
     num_posts = len(all_post_ids)
+    print('Number of posts is \n', num_posts, file=sys.stderr)
+    print('Number of users is \n', num_users, file=sys.stderr)
 
+    post_id_index_map = dict(zip(all_post_ids, np.arange(num_posts)))
     comment_matrix = dok_matrix((num_users, num_posts), dtype=np.float32)
     for i in range(num_users):
         user_comments = Comment.objects.filter(from_name=all_user_names[i])
         for user_comment in user_comments:
-            j = all_post_ids.index(user_comment.post_id.id)
+            # j = all_post_ids.index(user_comment.post_id.id)
+            j = post_id_index_map[user_comment.post_id.id]
             comment_matrix[i, j] = 1
+    print('Made a user-post matrix!!!!!!\n', file=sys.stderr)
 
-    # Calculate pairwise similarity between posts
+    # # Calculate pairwise similarity between posts
     cosine_sim = cosine_similarity(comment_matrix.transpose())
+    print('Calculated cosine similarity!!!!!!!!! \n', file=sys.stderr)
 
-    # Update cosine CosineSimilarity
+    # # Update cosine CosineSimilarity
     CosineSimilarity.objects.all().delete()
     for i in range(num_posts):
         source_id = all_post_ids[i]
@@ -30,3 +37,5 @@ def update_filter():
             target_id = all_post_ids[j]
             new_similarity = CosineSimilarity(source_id=source_id, target_id=target_id, similarity=cosine_sim[i,j])
             new_similarity.save()
+    print('Update cosine similarities table!!!!!!!!! \n', file=sys.stderr)
+    return(1)
