@@ -10,7 +10,7 @@
   <div class="col-sm-2">
         <div class="thumbnail" style="border: 0 none; box-shadow: none;">
       <div class="caption">
-        <img src="http://graph.facebook.com/{{user.id}}/picture?type=square" style="width: 50px; height: 50px;">
+        <img src="http://graph.facebook.com/{{user.id}}/picture?type=thumbnail" style="width: 50px; height: 50px;">
         <h6>{{ user.name }}</h6>
         <p><a href="{% url 'recsys:user_detail' user.id%}">Read More</a></p>
       </div>
