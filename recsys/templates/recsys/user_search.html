@@ -3,13 +3,12 @@
 {% block title %}
 <h2>User list</h2>
 {% endblock %}
-
 {% block content %}
-{% if user_list %}
+{% if found_entries %}
 <div class="row">
-  {% for user in user_list %}
+  {% for user in found_entries %}
   <div class="col-sm-2">
-      <div class="thumbnail" style="border: 0 none; box-shadow: none;">
+        <div class="thumbnail" style="border: 0 none; box-shadow: none;">
       <div class="caption">
         <img src="http://graph.facebook.com/{{user.id}}/picture?type=square" style="width: 50px; height: 50px;">
         <h6>{{ user.name }}</h6>
