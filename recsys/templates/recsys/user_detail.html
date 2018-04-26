@@ -8,9 +8,13 @@
 {% if comment_list %}
 
 <div class="table-responsive">
-    <h2><a href="{% url 'recsys:user_recommended_posts' user_id%}">
-        Recommended posts for {{ user_name }} </a></h2>
-
+    <h2>Recommended posts for {{ user_name }}</h2>
+    <h3><a href="{% url 'recsys:user_recommended_posts' user_id%}">
+        Tf-idf Recommender</a></h3>
+    <h3><a href="#">
+        Doc2Vec Recommender</a></h3>
+    <h3><a href="{% url 'recsys:user_recommended_posts' user_id%}">
+        Item-item Collaborative Filtering Recommender</a></h3>
     <table class="table">
         <thead>
         <tr>
