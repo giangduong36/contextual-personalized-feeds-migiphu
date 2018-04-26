@@ -19,6 +19,5 @@ urlpatterns = [
     path('user/<user_id>/', views.user_detail, name='user_detail'),
     path('user_search/', views.user_search, name='user_search'),
     path('user/<user_id>/recommended_posts/', views.user_recommended_post, name='user_recommended_posts'),
-
-    path('clrec/', views.recommendation_CL, name='recommendation_CL')
+    path('user/<user_id>/recommended_posts_CF/', views.recommendation_CF, name='recommendation_CF')
 ]

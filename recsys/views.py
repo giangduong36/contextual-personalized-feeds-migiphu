@@ -167,8 +167,9 @@ def comment_detail(request, comment_id):
 
 
 # Recommendation using item-item collaborative filtering
-def recommendation_CL(request):
-    user_id = 10155675667923755 #remove this later?
+def recommendation_CF(request, user_id):
+    if user_id is None:
+        user_id = 10155675667923755 #remove this later?
     user_comments = Comment.objects.filter(from_id=user_id).order_by('created_time')
     user_posts_ids = list(map(lambda x: x.post_id.id, user_comments))
     latest_post_id = user_posts_ids[0]

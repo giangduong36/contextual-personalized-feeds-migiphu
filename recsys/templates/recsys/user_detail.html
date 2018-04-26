@@ -13,8 +13,10 @@
         Tf-idf Recommender</a></h3>
     <h3><a href="#">
         Doc2Vec Recommender</a></h3>
-    <h3><a href="{% url 'recsys:user_recommended_posts' user_id%}">
+    <h3><a href="{% url 'recsys:recommendation_CF' user_id%}">
         Item-item Collaborative Filtering Recommender</a></h3>
+        
+    <h2>Posts {{user_name}} has read</h2>
     <table class="table">
         <thead>
         <tr>
