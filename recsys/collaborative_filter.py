@@ -16,24 +16,34 @@ def update_filter():
     print('Number of users is \n', num_users, file=sys.stderr)
 
     post_id_index_map = dict(zip(all_post_ids, np.arange(num_posts)))
+    user_name_index_map = dict(zip(all_user_names, np.arange(num_users)))
+    print('Loading user - list of posts into memory \n', file=sys.stderr)
+    all_users_posts = Comment.objects.raw('SELECT id, from_name, GROUP_CONCAT(post_id_id) as post_ids \
+    FROM recsys_comment \
+    GROUP BY from_name')
+    print('Done \n', file=sys.stderr)
+
     comment_matrix = dok_matrix((num_users, num_posts), dtype=np.float32)
-    for i in range(num_users):
-        user_comments = Comment.objects.filter(from_name=all_user_names[i])
-        for user_comment in user_comments:
-            # j = all_post_ids.index(user_comment.post_id.id)
-            j = post_id_index_map[user_comment.post_id.id]
+    for user_posts in all_users_posts:
+        i = user_name_index_map[user_posts.from_name]
+        posts = user_posts.post_ids.split(",")
+        for post in posts:
+            j = post_id_index_map[post]
             comment_matrix[i, j] = 1
     print('Made a user-post matrix!!!!!!\n', file=sys.stderr)
 
-    # # Calculate pairwise similarity between posts
+    # Calculate pairwise similarity between posts
     cosine_sim = cosine_similarity(comment_matrix.transpose())
     print('Calculated cosine similarity!!!!!!!!! \n', file=sys.stderr)
 
-    # # Update cosine CosineSimilarity
+    # Update cosine CosineSimilarity
     CosineSimilarity.objects.all().delete()
+    n = 30 # set this manually to reduce computation load
     for i in range(num_posts):
         source_id = all_post_ids[i]
-        for j in range(i+1, num_posts):
+        source_sim = cosine_sim[i,:]
+        top_n = np.argpartition(source_sim, -n)[-n:]
+        for j in top_n:
             target_id = all_post_ids[j]
             new_similarity = CosineSimilarity(source_id=source_id, target_id=target_id, similarity=cosine_sim[i,j])
             new_similarity.save()
