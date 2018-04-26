@@ -6,15 +6,20 @@
 
 {% block content %}
 
-{% for field in form %}
-<h4>{{ field.label }} : {{field.value}}</h4>
-{% endfor %}
 
+<table class="table table-striped">
+  <tbody>
+    {% for field in form %}
+        <tr>
+            <td style="font-weight:bold;">{{ field.label }}</td>
+            <td>{{ field.value }}</td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
 <h2> Comments for this post: </h2>
-
 {% if comments %}
-
-<div class="table-responsive">
     <table class="table">
         <thead>
         <tr>
@@ -27,14 +32,12 @@
         <tbody>
         <tr>
             <td>{{ comment.created_time }}</td>
-            <td>{{ comment.from_name }}</td>
+            <td><a href="{% url 'recsys:user_detail' comment.from_id%}">{{ comment.from_name }}</td>
             <td>{{ comment.message }}</td>
         </tr>
         </tbody>
         {% endfor %}
     </table>
-</div>
-
 {% else %}
 <p>No posts are available.</p>
 {% endif %}
