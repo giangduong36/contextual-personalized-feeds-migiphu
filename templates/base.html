@@ -24,6 +24,12 @@
                 <li><a href="{% url 'recsys:post_list' %}">Posts</a></li>
                 <li><a href="{% url 'recsys:page_list' %}">Pages</a></li>
                 <li><a href="{% url 'recsys:user_list' %}">Users</a></li>
+                <li>
+                    <form class="" method="get" action="{% url 'recsys:user_search'%}">
+                       <input name="q" id="id_q" type="text" class="form-control" placeholder="Search" />
+                    </form>
+                </li>
+
             </ul>
             <ul class="nav navbar-nav navbar-right">
             </ul>

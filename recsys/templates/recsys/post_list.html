@@ -10,16 +10,41 @@
 
 {% block content %}
 {% if latest_post_list %}
-<div class="row">
-    {% for post in latest_post_list %}
-    <div class="col-sm-6">
-        <h4><a href="{% url 'recsys:post_detail' post.id%}">
-            {{ post.message }}
-        </a></h4>
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner" role="listbox">
+        {% for post in latest_post_list %}
+            <div class="item {% if forloop.counter == 1 %}active{% endif %}" id="slide{{ forloop.counter }}">
+                {% if 'videos' in post.link %}
+                    <iframe
+                        src="https://www.facebook.com/plugins/video.php?href={{post.link}}&show_text=0&width=500&mute=0"
+                        style="display: block; height: 100%; width: 100%;"
+                        scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"
+                    ></iframe>
+                {% else %}
+                    <img src="https://joeforamerica.com/wp-content/uploads/2017/03/breaking-news-1.jpg"
+                         style="display: block; height: 100%; width: 100%;">
+                {% endif %}
+                <div class="carousel-caption">
+                    {% if post.message != "nan" %}
+                    <h4>{{ post.message }}</h4>
+                    {% endif %}
+                    {% if post.description != "nan" %}
+                    <p>{{ post.description}}</p>
+                    {% endif %}
+                    <p><a href="{% url 'recsys:post_detail' post.id%}">Read More</a></p>
+                </div>
+            </div>
+        {% endfor %}
+      </div>
+      <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
     </div>
-</div>
-{% endfor %}
-
 {% else %}
 <p>No posts are available.</p>
 {% endif %}
