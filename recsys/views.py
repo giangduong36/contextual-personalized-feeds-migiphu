@@ -166,14 +166,32 @@ def comment_detail(request, comment_id):
     pass
 
 
+# Recommendation using Doc2Vec
+def recommendation_d2v(request, user_id):
+    user_comments = Comment.objects.filter(from_id=user_id)
+    user_comments_post_id = set(map(lambda x: x.post_id.id, user_comments))
+    d2v_rec = pd.read_csv('data/fb_news_posts_20K_doc2v.csv')
+
+    most_similar = d2v_rec.loc[d2v_rec['post_id'].isin(user_comments_post_id)]
+
+    rec_posts_ids = []
+    for i in most_similar['most_similar'].tolist():
+        most_similar_ids = (i[1:-1].split(','))
+        most_similar_ids = [i.replace(" ", "").replace('\'', "") for i in most_similar_ids]
+        rec_posts_ids.extend(most_similar_ids)
+
+    rec_posts = Post.objects.filter(pk__in=rec_posts_ids)
+    context = {'rec_posts': rec_posts,
+               'user_name': UserTest.objects.get(pk=user_id).name}
+    return render(request, 'recsys/user_recommended_post.html', context)
+
+
+# Recommendation using item-item collaborative filtering
 def recommendation_CF(request, user_id):
 
     '''
     Use item-item colloborative filtering to recommend posts to current user
     '''
-
-    if user_id is None:
-        user_id = 10155675667923755 #remove this later?
     user_comments = Comment.objects.filter(from_id=user_id).order_by('created_time')
     user_posts_ids = list(map(lambda x: x.post_id.id, user_comments))
     latest_post_id = user_posts_ids[0]

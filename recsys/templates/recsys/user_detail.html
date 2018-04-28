@@ -11,7 +11,7 @@
     <h2>Recommended posts for {{ user_name }}</h2>
     <h3><a href="{% url 'recsys:user_recommended_posts' user_id%}">
         Tf-idf Recommender</a></h3>
-    <h3><a href="#">
+    <h3><a href="{% url 'recsys:recommendation_d2v' user_id%}">
         Doc2Vec Recommender</a></h3>
     <h3><a href="{% url 'recsys:recommendation_CF' user_id%}">
         Item-item Collaborative Filtering Recommender</a></h3>
