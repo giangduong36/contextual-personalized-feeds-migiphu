@@ -1,9 +1,10 @@
-from .models import Post, Comment, UserTest, CosineSimilarity
 from django.contrib.auth.models import User
 from sklearn.metrics.pairwise import *
 from scipy.sparse import dok_matrix, csr_matrix
 import numpy as np
-import sys
+import sys, os
+sys.path.append(os.path.abspath(os.path.join('..', 'recsys')))
+from recsys.models import Post, Comment, UserTest, CosineSimilarity
 
 def update_filter():
     # Create a sparse matrix of user - post
