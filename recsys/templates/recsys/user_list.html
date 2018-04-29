@@ -1,25 +1,30 @@
 {% extends 'base.html' %}
-
-{% block title %}
-<h2>User list</h2>
-{% endblock %}
+{% load static %}
 
 {% block content %}
 {% if user_list %}
-<div class="row">
-  {% for user in user_list %}
-  <div class="col-sm-2">
-      <div class="thumbnail" style="border: 0 none; box-shadow: none;">
-      <div class="caption">
-        <img src="http://graph.facebook.com/{{user.id}}/picture?type=square" style="width: 50px; height: 50px;">
-        <h6>{{ user.name }}</h6>
-        <p><a href="{% url 'recsys:user_detail' user.id%}">Read More</a></p>
-      </div>
+<div class="container">
+	<div class="row">
+		<div class="span12">
+			<div id="main" role="main">
+			    <ul id="tiles" class="unstyled">
+                {% for user in user_list %}
+                <li>
+                    <div>
+                        <div class="post-home">
+                            <p class="mb-0">{{user.name}}</p>
+
+                            <p><a href="{% url 'recsys:user_detail' user.id%}">Read More</a></p>
+                        </div>
+                    </div>
+                {% endfor %}
+                </ul>
+            </div>
+		</div>
     </div>
-  </div>
-  {% endfor %}
 </div>
+
 {% else %}
-    <p>No users are available.</p>
+<p>No users are available.</p>
 {% endif %}
 {% endblock %}

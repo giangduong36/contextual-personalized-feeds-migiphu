@@ -1,27 +1,48 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'recsys/style.css' %}">
 
-{% block title %}
-<h2>Recommended posts for user {{user_name}}</h2>
-{% endblock %}
 
 {% block content %}
+{% block title %}
+<h2>Recommended Posts for {{user_name}}</h2>
+{% endblock %}
 {% if rec_posts %}
-<div class="row">
-    {% for post in rec_posts %}
-    <div class="col-sm-6">
-        <h4><a href="{% url 'recsys:post_detail' post.id%}">
-        {{ post.message }}
-        </a></h4>
+
+<div class="container">
+	<div class="row">
+		<div class="span12">
+			<div id="main" role="main">
+			    <ul id="tiles" class="unstyled">
+                {% for post in rec_posts %}
+                <li>
+                    <div>
+                        <div class="post-home">
+                            {% if 'videos' in post.link %}
+                                <div style="position:relative; width:100%; height:0px; padding-bottom:56.25%;">
+                                    <iframe style="position:absolute; left:0; top:0; width:100%; height:100%"
+                                        src="https://www.facebook.com/plugins/video.php?href={{post.link}}&show_text=0&mute=0">
+                                    </iframe>
+                                </div>
+                            {% endif %}
+                            {% if post.message != "nan" %}
+                                <p class="mb-0">{{post.message}}</p>
+                            {% endif %}
+                            {% if post.description != "nan" %}
+                                <p class="lead">{{post.description}}</p>
+                            {% endif %}
+                            <p><a href="{% url 'recsys:post_detail' post.id%}">Read More</a></p>
+                        </div>
+                    </div>
+                {% endfor %}
+                </ul>
+            </div>
+		</div>
     </div>
-    {% endfor %}
 </div>
 
 
 {% else %}
-<p>No posts are available for this page.</p>
+    <p>No pages are available.</p>
 {% endif %}
 {% endblock %}
