@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django.db.models import Count
 from django.forms import ModelForm
-from .collaborative_filter import update_filter
+from .recommender.collaborative_filter import update_filter
 import pandas as pd
 # from .recommender import doc2vec_recommender, tfidf_recommender
 # logging to the console for debug
@@ -186,10 +186,13 @@ def recommendation_d2v(request, user_id):
                'user_name': UserTest.objects.get(pk=user_id).name}
     return render(request, 'recsys/user_recommended_post.html', context)
 
+
 # Recommendation using item-item collaborative filtering
 def recommendation_CF(request, user_id):
-    if user_id is None:
-        user_id = 10155675667923755 #remove this later?
+
+    '''
+    Use item-item colloborative filtering to recommend posts to current user
+    '''
     user_comments = Comment.objects.filter(from_id=user_id).order_by('created_time')
     user_posts_ids = list(map(lambda x: x.post_id.id, user_comments))
     latest_post_id = user_posts_ids[0]
@@ -198,6 +201,9 @@ def recommendation_CF(request, user_id):
 
     comparable = CosineSimilarity.objects.filter(source_id=latest_post_id)
     if not comparable:
+        # This should only run the first time this function is called
+        # Periodic updates of the cosine similarity should be done offline so there isn't a lag
+        # TODO: Replace update_filter() with a function that only updates the new posts that aren't in the database
         update_filter()
     similarities = CosineSimilarity.objects.filter(source_id=latest_post_id) \
                     .exclude(target_id__in=user_posts_ids).order_by('-similarity')
