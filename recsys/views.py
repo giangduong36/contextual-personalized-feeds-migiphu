@@ -149,6 +149,7 @@ def user_search(request):
     all_user_tests = UserTest.objects.all()
     query_string = ''
     found_entries = None
+    entry_query = None
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
         entry_query = get_query(query_string, ['id', 'name'])

@@ -1,3 +1,18 @@
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+<link rel='stylesheet' id='font-awesome-css'  href='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/css/font-awesome.css?ver=3.0' type='text/css' media='all' />
+<link rel='stylesheet' id='colorbox-css'  href='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/css/colorbox.css?ver=1.3.19' type='text/css' media='all' />
+<link rel='stylesheet' id='responsive-style-css'  href='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/style.css?ver=1.2.0' type='text/css' media='all' />
+<script type='text/javascript' src='http://bragthemes.com/demo/pinstrap/wp-includes/js/jquery/jquery.js?ver=1.11.1'></script>
+<script type='text/javascript' src='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/js/responsive-modernizr.js?ver=2.5.3'></script>
+<script type='text/javascript' src='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/js/bootstrap.js?ver=4.1.1'></script>
+<script type='text/javascript' src='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/js/strap-extras.js?ver=4.1.1'></script>
+<script type='text/javascript' src='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/js/jquery.imagesloaded.js?ver=4.1.1'></script>
+<script type='text/javascript' src='http://bragthemes.com/demo/pinstrap/wp-content/themes/pinstrap/js/jquery.wookmark.js?ver=4.1.1'></script>
+
 {% load bootstrap3 %}
 
 {% bootstrap_css %}
@@ -6,41 +21,60 @@
 {% load static %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'recsys/style.css' %}">
-<link href="https://fonts.google.com/specimen/Vollkorn?selection.family=Vollkorn" rel="stylesheet" type="text/css">
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+        $(document).ready(function() {
+			$('[data-toggle=offcanvas]').click(function() {
+				$(this).toggleClass('visible-xs text-center');
+				$(this).find('i').toggleClass('glyphicon-chevron-right glyphicon-chevron-left');
+				$('.row-offcanvas').toggleClass('active');
+				$('#lg-menu').toggleClass('hidden-xs').toggleClass('visible-xs');
+				$('#xs-menu').toggleClass('visible-xs').toggleClass('hidden-xs');
+				$('#btnShow').toggle();
+			});
+        });
+</script>
 
 
 {% block bootstrap3_content %}
 <div class="container">
-    <nav class="navbar navbar-default">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="{% url 'recsys:home' %}"> Home </a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="{% url 'recsys:post_list' %}">Posts</a></li>
-                <li><a href="{% url 'recsys:page_list' %}">Pages</a></li>
-                <li><a href="{% url 'recsys:user_list' %}">Users</a></li>
-                <li>
-                    <form class="" method="get" action="{% url 'recsys:user_search'%}">
-                       <input name="q" id="id_q" type="text" class="form-control" placeholder="Search" />
-                    </form>
-                </li>
-
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-            </ul>
-        </div>
-    </nav>
-
-
-    <h1>{% block title %}(no title){% endblock %}</h1>
-
-    {% bootstrap_messages %}
-
+<div class="navbar navbar-blue navbar-static-top">
+	<div class="navbar-header">
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
+			<span class="sr-only">Toggle</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+	</div>
+	<nav class="collapse navbar-collapse" role="navigation">
+		<ul class="nav navbar-nav">
+			<li>
+				<a href="{% url 'recsys:home' %}"><i class="glyphicon glyphicon-home"></i> Home</a>
+			</li>
+			<li>
+				<a href="{% url 'recsys:page_list'%}" role="button" data-toggle="modal"><i class="glyphicon glyphicon-list-alt"></i> Pages</a>
+			</li>
+			<li>
+				<a href="{% url 'recsys:user_list' %}" role="button"><i class="glyphicon glyphicon-user"></i> Users</a>
+			</li>
+			<li>
+				<a href="{% url 'recsys:user_detail' 228735667216%}" role="button"><i class="glyphicon glyphicon-thumbs-up"></i> Recommendations</a>
+			</li>
+			<li>
+				<form style="padding-top: 11px;" class="" method="get" action="{% url 'recsys:user_search'%}">
+					<div class="input-group input-group-sm" style="max-width:360px;">
+						<input class="form-control" placeholder="Search" name="q" id="id_q" type="text">
+						<div class="input-group-btn">
+							<button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+						</div>
+					</div>
+				</form>
+			</li>
+		</ul>
+	</nav>
+</div>
     {% block content %}(no content){% endblock %}
 </div>
 
