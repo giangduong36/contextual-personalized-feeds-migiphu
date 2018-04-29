@@ -10,12 +10,8 @@
 			    <ul id="tiles" class="unstyled">
                 {% for post in latest_post_list %}
                 <li>
-                    <div>
+                    <div id="post-{{post.id}}">
                         <div class="post-home">
-                                <p class="mb-0">{{user.name}}</p>
-                            {% if post.message != "nan" %}
-                                <p class="lead">{{post.message}}</p>
-                            {% endif %}
                             {% if 'videos' in post.link %}
                                 <div style="position:relative; width:100%; height:0px; padding-bottom:56.25%;">
                                     <iframe style="position:absolute; left:0; top:0; width:100%; height:100%"
@@ -24,10 +20,13 @@
                                     </iframe>
                                 </div>
                             {% endif %}
-                            {% if post.description != "nan" %}
-                                <p class="mb-0">{{post.description}}</p>
+                            {% if post.message != "nan" %}
+                                <p class="mb-0">{{post.message}}</p>
                             {% endif %}
-                            <p><a href="{% url 'recsys:post_detail' post.id%}">Read More</a></p>
+                            {% if post.description != "nan" %}
+                                <p class="lead">{{post.description}}</p>
+                            {% endif %}
+                            <p><a href="{% url 'recsys:page_detail' post.id%}">Read More</a></p>
                         </div>
                     </div>
                 {% endfor %}
