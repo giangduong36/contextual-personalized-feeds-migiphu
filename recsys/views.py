@@ -4,8 +4,6 @@ from django.db.models import Count
 from django.forms import ModelForm
 from .recommender.collaborative_filter import update_filter
 import pandas as pd
-# from .recommender import doc2vec_recommender, tfidf_recommender
-# logging to the console for debug
 import sys
 from django.db.models import Q
 import re
@@ -149,7 +147,6 @@ def user_search(request):
     all_user_tests = UserTest.objects.all()
     query_string = ''
     found_entries = None
-    entry_query = None
     if ('q' in request.GET) and request.GET['q'].strip():
         query_string = request.GET['q']
         entry_query = get_query(query_string, ['id', 'name'])
