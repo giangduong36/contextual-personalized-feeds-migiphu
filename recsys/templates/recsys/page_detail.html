@@ -2,6 +2,10 @@
 {% load static %}
 
 {% block content %}
+{% block title %}
+<h2>Latest Posts by {{page_name}}</h2>
+{% endblock %}
+
 {% if latest_post_list %}
 <div class="container">
 	<div class="row">
