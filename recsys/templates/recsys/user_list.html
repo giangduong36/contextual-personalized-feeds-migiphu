@@ -12,8 +12,8 @@
                 <li>
                     <div>
                         <div class="post-home">
-                            <p class="mb-0">{{user.name}}</p>
-
+                            <img src="{% static images|random %}">
+                            <b class="lead text-center"> {{user.name}}</b>
                             <p><a href="{% url 'recsys:user_detail' user.id%}">Read More</a></p>
                         </div>
                     </div>

@@ -7,6 +7,9 @@ import pandas as pd
 import sys
 from django.db.models import Q
 import re
+from django import template
+
+register = template.Library()
 
 # Create your views here.
 
@@ -16,8 +19,13 @@ from .models import *
 
 
 def page_list(request):
+    strings = ['recsys/PusheenPack/cake.png', 'recsys/PusheenPack/art.png', 'recsys/PusheenPack/cookies.png',
+               'recsys/PusheenPack/DJ.png', 'recsys/PusheenPack/Games.png', 'recsys/PusheenPack/Music.png',
+               'recsys/PusheenPack/pizza.png', 'recsys/PusheenPack/Pusheen.png', 'recsys/PusheenPack/R2D2.png',
+               'recsys/PusheenPack/Sailor Moon.png', 'recsys/PusheenPack/school.png', 'recsys/PusheenPack/Sushi.png',
+               'recsys/PusheenPack/Unicorn.png']
     latest_page_list = Page.objects.all()
-    context = {'latest_page_list': latest_page_list}
+    context = {'latest_page_list': latest_page_list, 'images': strings}
     return render(request, 'recsys/page_list.html', context)
 
 
@@ -67,8 +75,14 @@ def post_detail(request, post_id):
 
 
 def user_list(request):
+    strings = ['recsys/PusheenPack/cake.png', 'recsys/PusheenPack/art.png', 'recsys/PusheenPack/cookies.png',
+               'recsys/PusheenPack/DJ.png', 'recsys/PusheenPack/Games.png', 'recsys/PusheenPack/Music.png',
+               'recsys/PusheenPack/pizza.png', 'recsys/PusheenPack/Pusheen.png', 'recsys/PusheenPack/R2D2.png',
+               'recsys/PusheenPack/Sailor Moon.png', 'recsys/PusheenPack/school.png', 'recsys/PusheenPack/Sushi.png',
+               'recsys/PusheenPack/Unicorn.png']
+
     all_user_tests = UserTest.objects.all()[:100]
-    context = {'user_list': all_user_tests}
+    context = {'user_list': all_user_tests, 'images': strings}
     return render(request, 'recsys/user_list.html', context)
 
 
@@ -144,6 +158,11 @@ def get_query(query_string, search_fields):
     return query
 
 def user_search(request):
+    strings = ['recsys/PusheenPack/cake.png', 'recsys/PusheenPack/art.png', 'recsys/PusheenPack/cookies.png',
+               'recsys/PusheenPack/DJ.png', 'recsys/PusheenPack/Games.png', 'recsys/PusheenPack/Music.png',
+               'recsys/PusheenPack/pizza.png', 'recsys/PusheenPack/Pusheen.png', 'recsys/PusheenPack/R2D2.png',
+               'recsys/PusheenPack/Sailor Moon.png', 'recsys/PusheenPack/school.png', 'recsys/PusheenPack/Sushi.png',
+               'recsys/PusheenPack/Unicorn.png']
     all_user_tests = UserTest.objects.all()
     query_string = ''
     found_entries = None
@@ -152,7 +171,7 @@ def user_search(request):
         entry_query = get_query(query_string, ['id', 'name'])
         found_entries = all_user_tests.filter(entry_query) #.order_by('-something')
 
-    context = {'query_string': query_string, 'entry_query': entry_query, 'found_entries': found_entries}
+    context = {'query_string': query_string, 'entry_query': entry_query, 'found_entries': found_entries, 'images': strings}
     return render(request, 'recsys/user_search.html', context)
 
 
