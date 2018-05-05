@@ -7,7 +7,7 @@ This project consists of three main components:
 
 + A personalized news feed built with Django featuring news articles
 + Recommendations were created using: Tf-idf, Doc2Vec, Item-item Collaborative Filtering and an ensemble method using Learning to Rank
-+ Contextual bandit recommender was trained as a proof of concept.
++ Contextual bandit recommender (LinUCB algorithm) was trained as a proof of concept.
 
 Here are some screen shots of the news feed:
 
@@ -44,6 +44,8 @@ these instructions.
 
 ### Prerequisite
 
+Please refer to `requirements.txt` file. Some of the most important packages are:
+
 `Django 2.0.4`
 
 `Django boostrap3 9.1.0`
@@ -53,7 +55,7 @@ these instructions.
 
 ### Installation
 
-- Clone and do:
+- Clone the repository and do:
 
 `python manage.py makemigrations recsys`
 
@@ -66,7 +68,7 @@ these instructions.
 - Copy four data files linked below into the `data` folder (which is currently empty)
 
 Copy and paste the [db.sqlite3](https://1fichier.com/?2r7bxhbnam) file in Drive to the repository
-OR populating data yourself (will take a long time)
+OR populating data yourself with the following 4 commands(will take a long time)
 
 `python load_pages.py data/fb_news_pagenames.csv` [download](https://1fichier.com/?7nskh43qry)
 
@@ -84,6 +86,20 @@ Username: comp440
 
 Password: Hello321
 
+## Run contextual bandit LinUCB
+
+- Populate necessary data files to `data` folder: [download[(https://1fichier.com/?qdeboefe1i)
+- Go to `recsys/recommender/` and run `python ./contextual_bandit_simulate.py` 
+- To test LinUCB on a sample dataset: do `run_sample_dataset()` in the main function of `contextual_bandit_simulate.py` file.
+- To run LinUCB on the Facebook News Dataset: using the example code, create a new sample with a size of your choice and do `run_generated_dataset`.
+- The result image for the cumulative click through rate will be saved in the same folder.
+
+## Run Learning-To-Rank ensemble recommender
+- To run the Learning-To-Rank ensemble on existing train, validation, and test sets of size 5000 most active users, go to `recsys/recommender/` and run `python ./learning_to_rank_ensemble.py`.
+- To run the Learning-To-Rank ensemble on new train, validation, and test sets:
+  * Run `create_dataset_for_learning_to_rank(n_users)`
+  * Follow the [documentation from The  Lemur Project](https://sourceforge.net/p/lemur/wiki/RankLib%20How%20to%20use/). 
+  
 
 ## Contributors:
 
