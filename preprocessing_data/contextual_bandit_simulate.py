@@ -1,14 +1,21 @@
+import datetime
 import math
 import pickle
+from collections import Counter
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-from collections import Counter
 from sklearn.decomposition import PCA
+from tqdm import tqdm
+
+"""
+An implementation of contextual bandit LinUCB algorithm from paper: Li et al. (2010)
+Can run on both sample contextual bandit dataset or a sampling dataset from Facebook News Dataset
+"""
 
 
+# Helper function to save Python object for easy and quick retrieval later
 def save_obj(obj, name):
     with open(name + '.pkl', 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
@@ -19,78 +26,60 @@ def load_obj(name):
         return pickle.load(f)
 
 
-def choose_action(A, b, context, alpha):
-    best_value = -math.inf
-    best_a = None
-
-    for a in POST:
-        A_a_inv = np.linalg.inv(A[a])
-        theta_a = A_a_inv.dot(b[a])
-        p = theta_a.transpose().dot(context)
-        p += alpha * math.sqrt(context.transpose().dot(A_a_inv).dot(context))
-
-        if p > best_value:
-            best_value = p
-            best_a = a
-
-    return best_a
-
-
 def create_dataset(num_user=1000, num_post=10, num_cat=5):
     user_data = pd.read_csv('../data/user_features_engineered_small.csv', dtype=str)
     post_data = pd.read_csv('../data//post_features_engineered_small_set_cat.csv')
 
-    # post_data, user_data = reduce_dimension_pca(post_data_orig, user_data_orig)
-    # comment_data = pd.read_csv('../data//user_post_commented.csv', dtype=str)
-
     users_sample = user_data[user_data.user_id.isin(pd.Series(user_data.user_id.unique()).sample(num_user))].copy()
-    # print("Users number of comments: ", users_sample.groupby('size').size())
 
-    # users_sample = user_data.copy()
     users_sample.reset_index(drop=True, inplace=True)
     # comment_sample = comment_data[comment_data.user_id.isin(users_sample.user_id)].copy()
     # articles_sample = post_data[post_data.post_id.isin(comment_sample.post_id)].copy()
     # print(len(articles_sample))
 
+    # Load an existing dictionary with user jds as keys, posts a user commented on as values
     user_comment_dict = load_obj('comment_dict')
 
     dataset = pd.DataFrame()
 
-    n_comments=[]
+    n_comments = []
 
     for user_id in tqdm(users_sample.user_id, mininterval=10):
         articles_sample_commented = post_data[post_data.post_id.isin(user_comment_dict[user_id])].copy()
         n_comments.append(len(articles_sample_commented))
 
-        # 1st way to sample non-commented posts
-        # post_data_limit_cat = post_data[post_data.category.isin(pd.Series(post_data.category.unique()).sample(num_cat))]
-        # articles_sample_random = post_data_limit_cat[
-        #     post_data_limit_cat.post_id.isin(pd.Series(post_data_limit_cat.post_id.unique()).sample(num_post)) &
-        #     (~post_data_limit_cat.post_id.isin(user_comment_dict[user_id]))].copy()
-        # articles_sample = articles_sample_commented.append(articles_sample_random)
+        # 1st way to sample non-commented posts for each user in sample set
+        post_data_limit_cat = post_data[post_data.category.isin(pd.Series(post_data.category.unique()).sample(num_cat))]
+        articles_sample_random = post_data_limit_cat[
+            post_data_limit_cat.post_id.isin(pd.Series(post_data_limit_cat.post_id.unique()).sample(num_post)) &
+            (~post_data_limit_cat.post_id.isin(user_comment_dict[user_id]))].copy()
+        articles_sample = articles_sample_commented.append(articles_sample_random)
 
-        # 2nd attempt to make # commented = 1/10 # uncommented with similar size for each category
-        articles_sample = articles_sample_commented.copy()
-        commented_cat_dist = articles_sample_commented.groupby('category').size()
-        # print(commented_cat_dist).tolist()
-        for cat in commented_cat_dist.index:
-            articles_sample_random = post_data.loc[post_data.category == cat]
-            articles_sample_random = articles_sample_random[
-                articles_sample_random.post_id.isin(
-                    pd.Series(articles_sample_random.post_id.unique()).sample(num_post)) &
-                (~articles_sample_random.post_id.isin(user_comment_dict[user_id]))].copy()
-            articles_sample = articles_sample.append(articles_sample_random)
-        # print(articles_sample.shape)
+        # # 2nd way to sample non-commented posts for each user in sample set
+        # # (better randomization but more time consuming)
+        # # Number of commented posts = 1/10 # uncommented with similar size for each category
+        # articles_sample = articles_sample_commented.copy()
+        # commented_cat_dist = articles_sample_commented.groupby('category').size()
+        # # print(commented_cat_dist).tolist()
+        # for cat in commented_cat_dist.index:
+        #     articles_sample_random = post_data.loc[post_data.category == cat]
+        #     articles_sample_random = articles_sample_random[
+        #         articles_sample_random.post_id.isin(
+        #             pd.Series(articles_sample_random.post_id.unique()).sample(num_post)) &
+        #         (~articles_sample_random.post_id.isin(user_comment_dict[user_id]))].copy()
+        #     articles_sample = articles_sample.append(articles_sample_random)
+        # # print(articles_sample.shape)
 
         articles_sample.reset_index(drop=True, inplace=True)
 
         index = users_sample.index[users_sample.user_id == user_id].tolist()[0]
         repeat_user_row = users_sample.loc[np.repeat(index, len(articles_sample))]
-        # repeat_user_row.drop(columns='user_id', inplace=True)
         repeat_user_row.reset_index(drop=True, inplace=True)
         merge = pd.concat([articles_sample, repeat_user_row], axis=1, ignore_index=True)
+        # Add a reward column: 1 if the user commented on the post, 0 otherwise
         reward = np.concatenate(
-            [np.repeat(1, len(articles_sample_commented)), np.repeat(0, len(articles_sample) - len(articles_sample_commented))])
+            [np.repeat(1, len(articles_sample_commented)),
+             np.repeat(0, len(articles_sample) - len(articles_sample_commented))])
         merge['reward'] = reward
         dataset = dataset.append(merge)
 
@@ -102,9 +91,7 @@ def create_dataset(num_user=1000, num_post=10, num_cat=5):
     cols = dataset.columns.tolist()
     cols = [cols[0]] + [cols[-1]] + cols[1:-1]
     dataset = dataset[cols]
-    # user_id = dataset['user_id']
     dataset.drop(columns='user_id', inplace=True)
-    # dataset.insert(0, 'user_id', user_id)
 
     print("Dataset reward distribution: ", dataset.groupby('reward').size())
 
@@ -112,8 +99,9 @@ def create_dataset(num_user=1000, num_post=10, num_cat=5):
 
     print("Number of comments", n_comments)
 
-    dataset.to_csv(path_or_buf='../data/dataset_bandit_active' + str(num_user) + '_' + str(num_post) + 'small_set_cat_v2.csv',
-                   index=False)
+    dataset.to_csv(
+        path_or_buf='../data/dataset_bandit_active' + str(num_user) + '_' + str(num_post) + 'small_set_cat_v2.csv',
+        index=False)
     return dataset
 
 
@@ -136,10 +124,7 @@ def reduce_dimension_pca(posts_raw, users_raw, wanted_dim=6):
 
     users = pd.concat([users_raw[list(users_raw.columns[:1])], pd.DataFrame(pca_df_user)], axis=1)
 
-    # print(posts_raw.shape)
-    # print(users_raw.shape)
-    # print(posts.shape)
-    # print(users.shape)
+    # print(posts_raw.shape, (users_raw.shape), posts.shape, users.shape)
     cols = pca_df.columns.tolist()
     cols = ['category', 'reward'] + cols[0:-2]
     pca_df = pca_df[cols]
@@ -147,146 +132,119 @@ def reduce_dimension_pca(posts_raw, users_raw, wanted_dim=6):
     return posts, users
 
 
-def reduce_dim():
-    dataset = pd.read_csv('../data/dataset_bandit.csv')
-    featuredf = dataset.iloc[:, 2:]
-    pca = PCA(n_components=6)
-    pca_df = pd.DataFrame(pca.fit_transform(featuredf))
-    pca_df.index = dataset.index
-    pca_df['category'] = dataset.category
-    pca_df['reward'] = dataset.reward
-    cols = pca_df.columns.tolist()
-    cols = ['category', 'reward'] + cols[0:-2]
-    pca_df = pca_df[cols]
-    pca_df.to_csv(path_or_buf='../data/dataset_bandit_pca.csv',
-                   index=False)
+# Choose the next action (article to serve a user) for bandit
+def choose_action(A, b, context, alpha, POST):
+    best_value = -math.inf
+    best_a = None
+
+    for a in POST:
+        A_a_inv = np.linalg.inv(A[a])
+        theta_a = A_a_inv.dot(b[a])
+        p = theta_a.transpose().dot(context)
+        p += alpha * math.sqrt(context.transpose().dot(A_a_inv).dot(context))
+
+        if p > best_value:
+            best_value = p
+            best_a = a
+
+    return best_a
 
 
-def split_data_equal(dataset):
-    pass
+# Run contextual bandit LinUCB on a sample dataset from Facebook News Dataset
+def run_generated_dataset(dataset):
+    POST = (dataset['category']).unique()
+    # Since the Facebook News Dataset is very sparse, suggest a whole category of posts instead of individual posts
+
+    actions = np.array(dataset['category'])
+    # dataset.drop(columns=['post_id'], inplace=True)
+    # dataset.drop(columns=['category'], inplace=True)
+
+    rewards = np.array(dataset['reward'].astype(int).tolist())
+    contexts = np.array(dataset.iloc[:, 2:].astype(float).as_matrix())
+
+    print(len(actions))
+    print(len(rewards))
+    print(contexts.shape)
+    # T = trial t
+    T = len(dataset)
+    D = contexts.shape[1]
+
+    shuff = np.arange(T)
+    np.random.shuffle(shuff)
+    actions = actions[shuff]
+    rewards = rewards[shuff]
+    contexts = contexts[shuff]
+
+    run_bandit(POST, D, T, actions, rewards, contexts,
+               resultname="CRT on generated dataset " + str(datetime.datetime.now()) + ".png")
 
 
-if __name__ == "__main__":
-#     n_user = 1000
-#     n_article = 20
-#
-#     dataset = create_dataset(n_user, n_article)
-#
-
-    comment_dict = load_obj('comment_dict')
-# # def main2():
-    n_user = 5000
-    n_article = 20
-# #
-#     dataset = create_dataset(n_user, n_article)
-# # #
-# #     # dataset = pd.read_csv('../data/dataset_bandit_active' + str(n_user) + '_' + str(n_article) + '.csv')
-# #     dataset= pd.read_csv('../data/dataset_bandit_active5000_40small_set_cat_v1.csv')
-# #
-#     # dataset.sort_values(by=['hour', 'day'], inplace=True)
-#
-#     print("Dataset reward distribution: ", dataset.groupby('reward').size())
-#
-#     print("Dataset category distribution: ", dataset.groupby('category').size())  # dataset = dataset.drop_duplicates()
-#
-#     print(dataset.shape)
-#
-#     # POST = dataset['post_id'].unique()
-#     POST = (dataset['category']).unique()
-#     N_POST = len(POST)
-#     # actions = np.array(dataset['category'], dtype=str)
-#     actions = np.array(dataset['category'])
-#     # dataset.drop(columns=['post_id'], inplace=True)
-#     # dataset.drop(columns=['category'], inplace=True)
-#
-#     # actions = np.array(dataset.index//N_POST)
-#
-#     rewards = np.array(dataset['reward'].astype(int).tolist())
-#     contexts = np.array(dataset.iloc[:, 2:].astype(float).as_matrix())
-#
-#     print(len(actions))
-#     print(len(rewards))
-#     print(contexts.shape)
-#     # print(actions)
-#     # print(contexts)
-#     # T = trial t
-#     T = len(dataset)
-#     D = contexts.shape[1]
-#
-#     shuff = np.arange(T)
-#     np.random.shuffle(shuff)
-#     actions = actions[shuff]
-#     rewards = rewards[shuff]
-#     contexts = contexts[shuff]
-
-    # # EXISTING DATASET
-    #
-    dataset = open("dataset.txt")
-    # dataset = open("classification.txt")
+# Function to test LinUCB on the sample dataset from Professor Jebara, Columbia University
+def run_sample_dataset():
+    dataset = open("../data/bandit_test_dataset.txt")  # Source: Professor Jebara, Columbia University
     actions = np.zeros(10000)
     rewards = np.zeros(10000)
     contexts = np.zeros((10000, 100))
 
-    T = 0
+    T = 0  # Number of trials
     for line in dataset:
-        line = line.split(" ")[:-1]   #dataset.txt
-        # line = line.split(" ")    #classification.txt
-        # line = line.split(" ")
-        # line[len(line)-1] = line[len(line)-1][:-1]
+        line = line.split(" ")[:-1]  # dataset.txt
 
         actions[T] = float(line[0])
         rewards[T] = float(line[1])
         # rewards[T] = 1 #classification.txt
         for i in range(100):
-            # print(line[i + 1])
             contexts[T][i] = float(line[i + 2])
         T += 1
 
-    POST = np.arange(1,11)
+    POST = np.arange(1, 11)
     D = 100
+    run_bandit(POST, D, T, actions, rewards, contexts,
+               resultname="CTR on sample dataset " + str(datetime.datetime.now()) + ".png"
+               )
 
+
+def run_bandit(POST, D, T, actions, rewards, contexts, resultname='CTR Result'):
+    """
+    Run LinUCB algorithm and save the cumulative take rate to an image file
+    :param POST:
+    :param D:
+    :param T:
+    :param actions:
+    :param rewards:
+    :param contexts:
+    :param resultname:
+    :return:
+    """
     # initialize variables
-    theta = {}
-    A = {}
-    b = {}
+    theta, A, b = {}, {}, {}
 
     for i in POST:
         A[i] = np.identity(D)
         b[i] = np.zeros((D, 1))
         theta[i] = np.random.normal(size=D)
 
-    num = 0
-    deno = 0
-    CTR = []
+    num, deno, payoff, valid_total = 0, 0, 0, 0
+    CTR, best_a_list = [], []
 
-    payoff = 0
-    valid_total = 0
-
-    best_a_list = []
+    alpha = 1
 
     # LinUCB algorithm
     for t in tqdm(range(1, T + 1)):
         alpha = 1 / np.sqrt(t)
-
         p = {}
 
         # calculate CRT
-        arm_chosen = choose_action(A, b, contexts[t - 1], alpha)
-        # print(rewards[t - 1], type(rewards[t - 1]))
+        arm_chosen = choose_action(A, b, contexts[t - 1], alpha, POST)
         num += (int(rewards[t - 1])) * (actions[t - 1] == arm_chosen)
         deno += (actions[t - 1] == arm_chosen)
 
-        a = 0
         if deno == 0:
             CTR.append(0)
         else:
-            a = num / deno
             CTR.append(num / deno)
 
-        # print(a)
         # find arm with highest upper confidence bound
-        # A_t = [i for i in range(1, N_POST)]
-        # A_t = [actions[t - 1]]
         A_t = np.array(POST)
 
         for a in A_t:
@@ -316,17 +274,17 @@ if __name__ == "__main__":
             payoff += reward
             valid_total += 1
 
-            # print(best_a, best_value, valid_total)
-
     # print and plot results
     print(" " + str(num / deno))
 
-    print("valid total ", valid_total)
+    print("Valid predictions in total ", valid_total)
     if valid_total != 0:
         print(payoff / valid_total)
     print("-----")
 
     print("Frequency best articles: ", Counter(best_a_list))
+
+    # Plot and save the graph of cumulative take rate to file
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_title('alpha = ' + str(alpha) + ", final CTR = " + str(num / deno))
@@ -334,10 +292,21 @@ if __name__ == "__main__":
     ax.set_ylabel('Cumulative take rate')
     plt.plot(CTR)
 
-    import datetime
-    plt.savefig(str(datetime.datetime.now()) + "_" + str(n_user) + "_" + str(n_article) + "_"+ str(alpha) + "v2.png")
+    plt.savefig(resultname)
     plt.gcf().clear()
 
 
+if __name__ == "__main__":
+    comment_dict = load_obj('comment_dict')
 
-    # Number of users have commented more than 5 times: 28200
+    run_sample_dataset()
+
+    # # Create a new sample of users and contextual information
+    # n_user = 5000
+    # n_article = 20
+    # dataset = create_dataset(n_user, n_article)
+
+    # Use an existing dataset with 1000 users and
+    dataset = pd.read_csv('../data/dataset_bandit_active1000_10_set_cat_v1.csv')
+
+    run_generated_dataset(dataset)

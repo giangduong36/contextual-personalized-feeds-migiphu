@@ -86,7 +86,7 @@ def user_list(request):
     return render(request, 'recsys/user_list.html', context)
 
 
-"""View all comments of an user"""
+"""View all comments of a user"""
 
 
 def user_detail(request, user_id):

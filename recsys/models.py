@@ -14,8 +14,6 @@ class Page(models.Model):
 
 
 class Post(models.Model):
-    # page = models.ForeignKey(Page, on_delete=models.DO_NOTHING)
-    # No need _id for foreignkey
     page_id = models.ForeignKey(Page, on_delete=models.CASCADE, blank=True, null=True)
     id = models.CharField(max_length=100, primary_key=True)
     created_time = models.DateTimeField('created time', blank=True, null=True)
@@ -49,6 +47,6 @@ class UserTest(models.Model):
 
 class CosineSimilarity(models.Model):
     created_time = models.DateTimeField('created_time', blank=True, null=True)
-    source_id = models.CharField(max_length=100, blank=True, null=True) #characters id of post
+    source_id = models.CharField(max_length=100, blank=True, null=True)  # characters id of post
     target_id = models.CharField(max_length=100, blank=True, null=True)
     similarity = models.FloatField(blank=True, null=True)

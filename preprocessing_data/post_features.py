@@ -3,6 +3,10 @@ import numpy as np
 import dateutil.parser
 from sklearn.decomposition import PCA
 
+"""
+Python script to extract features of posts for contextual bandit algorithm from Facebook News Dataset
+Features included: Length of post's message, Number of each type of reactions, Number of shares, Post's created time
+"""
 
 def prepare_post_features():
     post_df = pd.read_csv('../data/fb_news_posts_20K.csv')
@@ -21,7 +25,6 @@ def prepare_post_features():
     reactions = ['react_angry', 'react_haha', 'react_like', 'react_love', 'react_sad', 'react_wow', 'shares']
     # get categories for each reaction
     cut_to_categories(post_df, reactions, bins=5)
-
 
     # Create time
 
@@ -47,6 +50,7 @@ def get_time_features(df, feature_list):
         df[feature] = [getattr(dateutil.parser.parse(i), feature) for i in df['created_time']]
 
 
+# Build a data frame of features
 def extract_features():
     post_df = pd.read_csv('../data/fb_news_posts_features.csv')
 
@@ -66,11 +70,6 @@ def extract_features():
     # all_features = ['cat_length'] + reactions + time_features
     all_features = ['cat_length'] + react_cat + time_features
 
-    # react_dict = {}
-    # for i in range(len(react_cat)):
-    #     react_dict[react_cat[i]] = reactions[i]
-
-
     all_features_val = []
     #
     for feature in all_features:
@@ -82,7 +81,7 @@ def extract_features():
     sample_feature_vec = dict.fromkeys(all_features_val, 0)
     print(sample_feature_vec)
 
-    # post_data = pd.read_csv('../data/fb_news_posts_features_exact.csv', dtype=str)
+    # A csv file of features with exact data
     post_data = pd.read_csv('../data/fb_news_posts_features.csv')
     post_data['message'] = post_data['message'].astype(str)
 
@@ -112,6 +111,5 @@ def extract_features():
 if __name__ == "__main__":
     # prepare_post_features()
     extract_features()
-
     # post_data = pd.read_csv('data/fb_news_posts_features.csv', dtype=str)
 

@@ -1,4 +1,6 @@
-import sys, os
+import os
+import sys
+
 import pandas as pd
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "recsys440.settings")
@@ -7,26 +9,26 @@ import django
 
 django.setup()
 
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 from recsys.models import UserTest
 
-from recsys.models import Comment
 
+# Create User Authentication with User ID and Name from dataset
+# http://www.jbencina.com/blog/2017/07/14/facebook-news-dataset-1000k-comments-20k-posts/
+def create_user(comment_row):
+    user_id = str(comment_row[1])
 
-# def create_user(comment_row):
-#     user_id = str(comment_row[1])
-#
-#     try:
-#         user = User.objects.get(username=user_id)
-#     except User.DoesNotExist:
-#         user = User.objects.create_user(
-#             username=user_id,  # Save the original id of user as the username
-#             first_name=comment_row[2],  # Get the name of the user
-#             last_name=user_id,  # Save the original id of user as the last name for easy retrieval
-#             password="Hello321",
-#         )
-#         user.save()
+    try:
+        user = User.objects.get(username=user_id)
+    except User.DoesNotExist:
+        user = User.objects.create_user(
+            username=user_id,  # Save the original id of user as the username
+            first_name=comment_row[2],  # Get the name of the user
+            last_name=user_id,  # Save the original id of user as the last name for easy retrieval
+            password="Hello321",  # Default password
+        )
+        user.save()
 
 
 # Load users as a Model, not a User Authentication (much faster, for testing)
@@ -54,8 +56,6 @@ if __name__ == "__main__":
         print("Reading from file " + str(sys.argv[1]))
         comments_df = pd.read_csv(sys.argv[1])
         comments_df.drop_duplicates(inplace=True)  # Comments data set have duplicates
-
-        # preprocess(str(sys.argv[1])) # Use for the ORIGINAL fb_news_comments_1000k.csv
 
         # WARNING: Naive date time error while time zone support is active
         # (scrape_time does not have any time zone specified)

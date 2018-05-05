@@ -9,7 +9,7 @@ import django
 django.setup()
 
 from recsys.models import Comment, Page, Post
-from django.utils import dateparse, timezone
+from django.utils import dateparse
 
 
 def save_comment_from_row(comment_row):

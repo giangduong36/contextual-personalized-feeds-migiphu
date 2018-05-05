@@ -2,7 +2,11 @@ import pandas as pd
 import numpy as np
 import pickle
 from tqdm import tqdm
-import math
+
+"""
+Python script to extract features of users for contextual bandit algorithm from Facebook News Dataset
+Features included: Activity level based on the number of comments, Gender based on first name
+"""
 
 def load_obj(name):
     with open(name + '.pkl', 'rb') as f:
@@ -46,9 +50,6 @@ def prepare_user_features():
     comment_dict = load_obj('comment_dict')
     for i, r in user_df.iterrows():
         num_comments.append(comment_dict[r.id])
-
-
-
 
     # # Number of comments
     # comment_df = pd.read_csv('data//fb_news_comments_1000k_cleaned.csv', dtype=str)
