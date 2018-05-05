@@ -11,11 +11,11 @@ This project consists of three main components:
 
 ![home page](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/homepage.png?raw=true)
 
-!(contextual-personalized-feeds-migiphu/image/userpage.png)[list of users]
+![list of users](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/userpage.png?raw=true)
 
-!(contextual-personalized-feeds-migiphu/image/userhomepage.png)[viewing a specific user]
+![view of specific user](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/userhomepage.png?raw=true)
 
-!(contextual-personalized-feeds-migiphu/image/recommendationpage.png)[viewing recommendations]
+![view of recommendations](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/recommendationpage.png?raw=true)
 
 ### About the data:
 
