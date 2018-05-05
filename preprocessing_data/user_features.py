@@ -14,21 +14,21 @@ def load_obj(name):
 
 
 def filter_less_active():
-    user_df = pd.read_csv('../data//fb_news_users_features.csv')
+    user_df = pd.read_csv('../data/fb_news_users_features.csv')
     small = user_df.loc[(user_df['size'] > 5) & (~ (user_df['gender']).isnull())]
     # quantiles = np.linspace(0, 1, 10).tolist()
     # quantile_edges = np.unique(small['size'].quantile(quantiles)).tolist()
 
     small['active_level'] = pd.cut(small['size'], [0, 6, 7, 8, 9, 12, 16, 22, 417], labels=np.arange(1, 9))
 
-    small.to_csv(path_or_buf='../data//fb_news_users_features_active.csv',
+    small.to_csv(path_or_buf='../data/fb_news_users_features_active.csv',
                    index=False)
 
 
 def prepare_user_features():
     # Get gender based on first name (given existing genders file)
-    gender_df = pd.read_csv('../data//genders.csv')
-    user_df = pd.read_csv('../data//fb_news_users.csv', dtype=str)
+    gender_df = pd.read_csv('../data/genders.csv')
+    user_df = pd.read_csv('../data/fb_news_users.csv', dtype=str)
     genderList = []
     allnames = list(user_df['name'])
     cnt = 0
@@ -52,7 +52,7 @@ def prepare_user_features():
         num_comments.append(comment_dict[r.id])
 
     # # Number of comments
-    # comment_df = pd.read_csv('data//fb_news_comments_1000k_cleaned.csv', dtype=str)
+    # comment_df = pd.read_csv('data/fb_news_comments_1000k_cleaned.csv', dtype=str)
     # size_comment = comment_df.groupby('from_id').size().reset_index(name='size')
     # user_df = user_df.merge(size_comment, left_on='id', right_on='from_id', how='inner')
     # user_df.drop(columns=['from_id'], inplace=True)
@@ -63,7 +63,7 @@ def prepare_user_features():
     # print(user_df.sort_values('size', ascending=False).head(10))
     print(user_df.groupby('active_level').size())
 
-    user_df.to_csv(path_or_buf='data//fb_news_users_features.csv',
+    user_df.to_csv(path_or_buf='data/fb_news_users_features.csv',
                    index=False)
 
 
@@ -79,7 +79,7 @@ def extract_features(active_level=10):
 
     sample_feature_vec = dict.fromkeys(genders + active_level, 0)
     print(sample_feature_vec)
-    user_data = pd.read_csv('../data//fb_news_users_features_active.csv', dtype=str)
+    user_data = pd.read_csv('../data/fb_news_users_features_active.csv', dtype=str)
 
     for i, row in user_data.iterrows():
         if i % 100 == 0:
@@ -93,7 +93,7 @@ def extract_features(active_level=10):
             user_features[user_id][gender] = 1
         user_features[user_id]['active' + str(active)] = 1
 
-    with open('../data//user_features_engineered_small.csv', 'w') as w:
+    with open('../data/user_features_engineered_small.csv', 'w') as w:
         w.write('user_id' + ',' + ','.join(str(x) for x in genders + active_level) + '\n')
         for user_id, features in user_features.items():
             w.write(user_id + ',' + ','.join(str(x) for x in features.values()) + '\n')

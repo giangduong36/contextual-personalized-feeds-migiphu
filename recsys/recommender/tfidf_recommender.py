@@ -45,58 +45,17 @@ def find_most_similar_posts_tfidf(k=3):
               index=False,
               columns=['post_id', 'most_similar', 'most_similar_rating'])
 
+    ## Split posts into clusters based on tf-idf
+    # number_of_clusters = 15
+    # km = KMeans(n_clusters=number_of_clusters)
+    # km.fit(tfidf)
+    # print("Top terms per cluster:")
+    # order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+    # terms = vec.get_feature_names()
+    # for i in range(number_of_clusters):
+    #     top_ten_words = [terms[ind] for ind in order_centroids[i, :5]]
+    #     print("Cluster {}: {}".format(i, ' '.join(top_ten_words)))
+
 
 find_most_similar_posts_tfidf(k=9)
 
-    # df = pd.read_csv('../../data/fb_news_posts_20K.csv')[['post_id', 'message']]
-    # df.fillna('', inplace=True)
-    # vec = TfidfVectorizer(stop_words='english')
-    # tfidf = vec.fit_transform(df['message'])
-    # similar = []
-    # for i in tqdm(range(0, df.shape[0])):
-    #     cosine_similarities = linear_kernel(tfidf[i:i + 1], tfidf).flatten()
-    #     # sim_index = cosine_similarities.argsort()[-2]   # Get the most similar post
-    #     sim_ids = cosine_similarities.argsort()[-2:-(2 + k):-1]  # The the 3 most similar posts
-    #     rec_posts = []
-    #     for sim_index in sim_ids:
-    #         postid = df.ix[sim_index]['post_id']
-    #         rec_posts.append(postid)
-    #     similar.append(rec_posts)
-    # df['most_similar'] = similar
-    # df.to_csv(path_or_buf='../../data/fb_news_posts_20K_tfidf.csv',
-    #           index=False,
-    #           columns=['post_id', 'most_similar'])
-
-# number_of_clusters = 15
-# km = KMeans(n_clusters=number_of_clusters)
-# km.fit(tfidf)
-# print("Top terms per cluster:")
-# order_centroids = km.cluster_centers_.argsort()[:, ::-1]
-# terms = vec.get_feature_names()
-# for i in range(number_of_clusters):
-#     top_ten_words = [terms[ind] for ind in order_centroids[i, :5]]
-#     print("Cluster {}: {}".format(i, ' '.join(top_ten_words)))
-
-# return df
-
-
-# def find_most_similar_tfidf(df):
-#     similar = []
-#     for i in range(0, df.shape[0]):
-#         cosine_similarities = linear_kernel(tfidf[i:i+1], tfidf).flatten()
-#         sim_index = cosine_similarities.argsort()[-2]   # Get the most similar post
-#         sim_ids = cosine_similarities.argsort()[-2:-5:-1]  # The the 3 most similar posts
-#         print(cosine_similarities.argsort(), sim_ids)
-#         text = df.ix[sim_index]['message']
-#         similar.append(text)
-#     df['most_similar'] = similar
-#     return df
-#
-
-# df = pd.read_csv('../../data/fb_news_posts_20K.csv')[['post_id', 'message']]
-# df.fillna('', inplace=True)
-#
-# tfidf = TfidfVectorizer().fit_transform(df['message'])
-
-# df = find_most_similar_posts_tfidf()
-# print(df.head())

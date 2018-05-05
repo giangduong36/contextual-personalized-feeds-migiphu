@@ -28,7 +28,7 @@ def load_obj(name):
 
 def create_dataset(num_user=1000, num_post=10, num_cat=5):
     user_data = pd.read_csv('../data/user_features_engineered_small.csv', dtype=str)
-    post_data = pd.read_csv('../data//post_features_engineered_small_set_cat.csv')
+    post_data = pd.read_csv('../data/post_features_engineered_small_set_cat.csv')
 
     users_sample = user_data[user_data.user_id.isin(pd.Series(user_data.user_id.unique()).sample(num_user))].copy()
 

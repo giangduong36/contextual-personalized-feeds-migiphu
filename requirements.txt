@@ -1,0 +1,13 @@
+requests==2.18.4
+scipy==1.0.0
+pandas==0.21.0
+gensim==3.3.0
+matplotlib==2.0.2
+nltk==3.2.5
+tqdm==4.23.1
+numpy==1.13.3
+Django==2.0.2
+python_dateutil==2.7.2
+scikit_learn==0.19.1
+django-bootstrap3
+virtualenv==15.1.0
