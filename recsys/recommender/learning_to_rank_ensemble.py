@@ -86,7 +86,7 @@ def create_dataset_for_learning_to_rank(n_users=300):
     doc2vec = format_similarity(pd.read_csv("../../data/fb_news_posts_20K_doc2v.csv"))
     tfidf = format_similarity(pd.read_csv("../../data/fb_news_posts_20K_tfidf.csv"), sep=" ")
 
-    cf = load_obj('collab_filtering')
+    cf = load_obj('ready_to_use_recommender_data/collab_filtering')
 
     features = {'1': doc2vec, '2': tfidf, '3': cf}
     users = [i for i in comment_dict.keys() if len(comment_dict[i]) > 5]  # Select active users
@@ -135,9 +135,9 @@ def create_dataset_for_learning_to_rank(n_users=300):
 
     train, validate, test = np.split(final_df.sample(frac=1), [int(.6 * len(df)), int(.8 * len(df))])
 
-    write_to_file('train' + str(len(users)) + '.txt', train)
-    write_to_file('validate' + str(len(users)) + '.txt', validate)
-    write_to_file('test' + str(len(users)) + '.txt', test)
+    write_to_file('LTR_files/train' + str(len(users)) + '.txt', train)
+    write_to_file('LTR_files/validate' + str(len(users)) + '.txt', validate)
+    write_to_file('LTR_files/test' + str(len(users)) + '.txt', test)
 
 
 def write_to_file(name, df):
@@ -204,7 +204,7 @@ def ndcg_score(y_true, y_score, k=10, gains="exponential"):
 
 
 if __name__ == '__main__':
-    comment_dict = load_obj('comment_dict')
+    comment_dict = load_obj('ready_to_use_recommender_data/comment_dict')
 
-    # create_dataset_for_learning_to_rank(n_users=5000)
-    test('test5000.txt', 'score5000.txt')
+    create_dataset_for_learning_to_rank(n_users=10)
+    test('LTR_files/test5000.txt', 'LTR_files/score5000.txt')
