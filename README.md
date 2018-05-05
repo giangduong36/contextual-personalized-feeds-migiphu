@@ -9,9 +9,13 @@ This project consists of three main components:
 + Recommendations were created using: Tf-idf, Doc2Vec, Item-item Collaborative Filtering and an ensemble method using Learning to Rank
 + Contextual bandit recommender was trained as a proof of concept.
 
-!(#)[image link]
-!(#)[image link]
-!(#)[image link]
+!(contextual-personalized-feeds-migiphu/image/homepage.png)[home page]
+
+!(contextual-personalized-feeds-migiphu/image/userpage.png)[list of users]
+
+!(contextual-personalized-feeds-migiphu/image/userhomepage.png)[viewing a specific user]
+
+!(contextual-personalized-feeds-migiphu/image/recommendationpage.png)[viewing recommendations]
 
 ### About the data:
 
@@ -32,30 +36,51 @@ these instructions.
 
 `
 Django - 2.0.4
+
 Django boostrap3 - 9.1.0
+
 numpy, scipy, sklearn, gensim
 `
 
 ### Installation
 
 - Clone and do:
+
 `
 python manage.py makemigrations recsys
+
 python manage.py migrate
 `
+
 - To run the server:
+
 `
 python manage.py runserver 0.0.0.0:8000
 `
 
 - Copy four data files linked below into the `data` folder (which is currently empty)
-Copy and paste the db.sqlite3 file in Drive to the repo OR populating data yourself (will take a long time)
-python load_pages.py [data/fb_news_pagenames.csv](https://1fichier.com/?7nskh43qry)
-python load_posts.py [data/fb_news_posts_20K.csv](https://1fichier.com/?vm3o938k7w)
-python load_comments.py [data/fb_news_comments_1000k_cleaned.csv](https://1fichier.com/?o53ktx5a7o)
-python load_users.py data/fb_news_comments_1000k_cleaned.csv
 
-- Open up a web browser and go to 0.0.0.0:8000/recsys
+Copy and paste the [db.sqlite3](https://1fichier.com/?2r7bxhbnam) file in Drive to the repository
+OR populating data yourself (will take a long time)
+
+`
+python load_pages.py [data/fb_news_pagenames.csv](https://1fichier.com/?7nskh43qry)
+
+python load_posts.py [data/fb_news_posts_20K.csv](https://1fichier.com/?vm3o938k7w)
+
+python load_comments.py [data/fb_news_comments_1000k_cleaned.csv](https://1fichier.com/?o53ktx5a7o)
+
+python load_users.py data/fb_news_comments_1000k_cleaned.csv
+`
+
+- Open up a web browser and go to http://0.0.0.0:8000/recsys to see userhomepage
+
+- Admin page with the whole datasets: http://0.0.0.0:8000/admin/
+
+Username: comp440
+
+Password: Hello321
+
 
 ## Contributors:
 
