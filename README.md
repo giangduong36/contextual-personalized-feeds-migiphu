@@ -44,9 +44,9 @@ these instructions.
 
 ### Prerequisite
 
-`Django - 2.0.4`
+`Django 2.0.4`
 
-`Django boostrap3 - 9.1.0`
+`Django boostrap3 9.1.0`
 
 `numpy, scipy, sklearn, gensim`
 
@@ -68,11 +68,11 @@ these instructions.
 Copy and paste the [db.sqlite3](https://1fichier.com/?2r7bxhbnam) file in Drive to the repository
 OR populating data yourself (will take a long time)
 
-`python load_pages.py [data/fb_news_pagenames.csv](https://1fichier.com/?7nskh43qry)`
+`python load_pages.py data/fb_news_pagenames.csv` [download](https://1fichier.com/?7nskh43qry)
 
-`python load_posts.py [data/fb_news_posts_20K.csv](https://1fichier.com/?vm3o938k7w)`
+`python load_posts.py data/fb_news_posts_20K.csv` [download](https://1fichier.com/?vm3o938k7w)
 
-`python load_comments.py [data/fb_news_comments_1000k_cleaned.csv](https://1fichier.com/?o53ktx5a7o)`
+`python load_comments.py data/fb_news_comments_1000k_cleaned.csv` [download](https://1fichier.com/?o53ktx5a7o)
 
 `python load_users.py data/fb_news_comments_1000k_cleaned.csv`
 
