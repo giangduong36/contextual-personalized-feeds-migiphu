@@ -9,7 +9,7 @@ This project consists of three main components:
 + Recommendations were created using: Tf-idf, Doc2Vec, Item-item Collaborative Filtering and an ensemble method using Learning to Rank
 + Contextual bandit recommender was trained as a proof of concept.
 
-[[https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/homepage.png]][home page]
+![home page](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/homepage.png?raw=true)
 
 !(contextual-personalized-feeds-migiphu/image/userpage.png)[list of users]
 
