@@ -125,12 +125,12 @@ def normalize_query(query_string,
     findterms=re.compile(r'"([^"]+)"|(\S+)').findall,
     normspace=re.compile(r'\s{2,}').sub):
 
-    '''
+    """
     Splits the query string in invidual keywords, getting rid of unecessary spaces and grouping quoted words together.
     Example:
     >>> normalize_query('  some random  words "with   quotes  " and   spaces')
         ['some', 'random', 'words', 'with quotes', 'and', 'spaces']
-    '''
+    """
 
     return [normspace(' ',(t[0] or t[1]).strip()) for t in findterms(query_string)]
 
@@ -173,14 +173,6 @@ def user_search(request):
 
     context = {'query_string': query_string, 'entry_query': entry_query, 'found_entries': found_entries, 'images': strings}
     return render(request, 'recsys/user_search.html', context)
-
-
-def comment_list(request):
-    pass
-
-
-def comment_detail(request, comment_id):
-    pass
 
 
 # Recommendation using Doc2Vec
