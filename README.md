@@ -9,11 +9,21 @@ This project consists of three main components:
 + Recommendations were created using: Tf-idf, Doc2Vec, Item-item Collaborative Filtering and an ensemble method using Learning to Rank
 + Contextual bandit recommender was trained as a proof of concept.
 
+Here are some screen shots of the news feed:
+
+The home page
+
 ![home page](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/homepage.png?raw=true)
+
+Display of list of users (mainly for testing purposes)
 
 ![list of users](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/userpage.png?raw=true)
 
+Clicking on a specific user shows posts they've read in the past, and options to view recommendations
+
 ![view of specific user](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/userhomepage.png?raw=true)
+
+View of recommendations
 
 ![view of recommendations](https://github.com/giangduong36/contextual-personalized-feeds-migiphu/blob/master/image/recommendationpage.png?raw=true)
 
