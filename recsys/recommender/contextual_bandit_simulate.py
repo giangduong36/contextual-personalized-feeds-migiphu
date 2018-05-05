@@ -27,8 +27,8 @@ def load_obj(name):
 
 
 def create_dataset(num_user=1000, num_post=10, num_cat=5):
-    user_data = pd.read_csv('../data/user_features_engineered_small.csv', dtype=str)
-    post_data = pd.read_csv('../data/post_features_engineered_small_set_cat.csv')
+    user_data = pd.read_csv('../../data/user_features_engineered_small.csv', dtype=str)
+    post_data = pd.read_csv('../../data/post_features_engineered_small_set_cat.csv')
 
     users_sample = user_data[user_data.user_id.isin(pd.Series(user_data.user_id.unique()).sample(num_user))].copy()
 
@@ -181,7 +181,7 @@ def run_generated_dataset(dataset):
 
 # Function to test LinUCB on the sample dataset from Professor Jebara, Columbia University
 def run_sample_dataset():
-    dataset = open("../data/bandit_test_dataset.txt")  # Source: Professor Jebara, Columbia University
+    dataset = open("../../data/bandit_test_dataset.txt")  # Source: Professor Jebara, Columbia University
     actions = np.zeros(10000)
     rewards = np.zeros(10000)
     contexts = np.zeros((10000, 100))
@@ -297,7 +297,7 @@ def run_bandit(POST, D, T, actions, rewards, contexts, resultname='CTR Result'):
 
 
 if __name__ == "__main__":
-    comment_dict = load_obj('comment_dict')
+    comment_dict = load_obj('ready_to_use_recommender_data/comment_dict')
 
     run_sample_dataset()
 
@@ -307,6 +307,6 @@ if __name__ == "__main__":
     # dataset = create_dataset(n_user, n_article)
 
     # Use an existing dataset with 1000 users and
-    dataset = pd.read_csv('../data/dataset_bandit_active1000_10_set_cat_v1.csv')
+    dataset = pd.read_csv('../../data/dataset_bandit_active1000_10_set_cat_v1.csv')
 
     run_generated_dataset(dataset)

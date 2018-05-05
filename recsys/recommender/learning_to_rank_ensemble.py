@@ -179,7 +179,7 @@ def test(test_path, score_path):
 
     print("Average recall: ", np.mean(counts))
     print(Counter(counts))
-    print("ndcg_Score", np.nanmean(ndcg_scores), ndcg_scores)
+    print("Mean ndcg_score", np.nanmean(ndcg_scores))
 
 
 def dcg_score(y_true, y_score, k=10, gains="exponential"):
