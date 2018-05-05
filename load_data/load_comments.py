@@ -54,9 +54,9 @@ def preprocess(path):
 
     print("Length of dataset: ", len(processed))
 
-    with open('data/fb_news_comments_1000k_cleaned.csv', 'w') as the_file:
+    with open('data/fb_news_comments_1000k_cleaned.csv', 'w') as f:
         for i in processed:
-            the_file.write(i + '\n')
+            f.write(i + '\n')
 
 
 if __name__ == "__main__":

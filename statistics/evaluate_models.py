@@ -14,6 +14,7 @@ from nltk.stem.wordnet import WordNetLemmatizer
 import re
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 
 
 # Function declarations
@@ -90,8 +91,8 @@ def is_in_top_k(test_case, rec, train_set, k=9):
 
 
 def evaluate_models(comments, n_fold=5):
-    doc2vec = format_similarity(pd.read_csv("data/fb_news_posts_20K_doc2v.csv"))
-    tfidf = format_similarity(pd.read_csv("data/fb_news_posts_20K_tfidf.csv"), sep=" ")
+    # doc2vec = format_similarity(pd.read_csv("../data/fb_news_posts_20K_doc2v.csv"))
+    tfidf = format_similarity(pd.read_csv("../data/fb_news_posts_20K_tfidf.csv"), sep=" ")
 
     test_prob = 1/n_fold
     if n_fold == 1:
@@ -100,7 +101,7 @@ def evaluate_models(comments, n_fold=5):
     # 5 fold cross validation
     comments = comments.drop_duplicates(['from_id', 'post_id'])
     users = comments.groupby('from_id').count().iloc[:, 0].reset_index() # created_time : number of posts read
-    potential_test_users = users[users.created_time > 1] # only include users who have read > 1 posts in test set
+    potential_test_users = users[users.created_time > 1]  # only include users who have read > 1 posts in test set
     test_set_size = np.int(test_prob*potential_test_users.shape[0])
 
     doc2vec_cv_recall = []
@@ -108,7 +109,7 @@ def evaluate_models(comments, n_fold=5):
     cf_cv_recall = []
     cv_recalls = [doc2vec_cv_recall, tfidf_cv_recall, cf_cv_recall]
 
-    for n in range(n_fold):
+    for n in tqdm(range(n_fold)):
 
         test_users = potential_test_users.iloc[(n*test_set_size): ((n+1)*test_set_size - 1), :]
         test_set = pd.merge(test_users, comments.drop_duplicates('from_id'), on='from_id').loc[:,['from_id', 'post_id']]
@@ -119,7 +120,9 @@ def evaluate_models(comments, n_fold=5):
 
         cf = find_most_similar_posts_collabfilter(train_set)
 
-        recommenders = [doc2vec, tfidf, cf]
+        # recommenders = [doc2vec, tfidf, cf]
+        recommenders = [tfidf, cf]
+
 
         # recommendation results
         for m in range(len(recommenders)):
@@ -135,5 +138,5 @@ def evaluate_models(comments, n_fold=5):
 # Calculate cross-validated recall rates of three models
 posts = pd.read_csv("../data/fb_news_posts_20K.csv")
 comments = pd.read_csv("../data/fb_news_comments_1000k_cleaned.csv")
-cv_recalls = evaluate_models(comments)
+# cv_recalls = evaluate_models(comments)
 # np.save("cv_recalls", cv_recalls) # save output

@@ -1,29 +1,35 @@
 import pandas as pd
 import numpy as np
 import dateutil.parser
+from sklearn.decomposition import PCA
 
 
 def prepare_post_features():
-    post_df = pd.read_csv('data/fb_news_posts_20K.csv')
+    post_df = pd.read_csv('../data/fb_news_posts_20K.csv')
     # post_df = post_df.applymap(str)
     post_df['message'] = post_df['message'].astype(str)
 
     # Length of posts
     messages = post_df['message'].tolist()
     num_words_arr = [len(i.split(" ")) for i in messages]
-    post_df['cat_length'] = pd.cut(num_words_arr, 10, labels=np.arange(1, 11))
+    # post_df['cat_length'] = pd.cut(num_words_arr, 10, labels=np.arange(1, 11))
+
+    post_df['cat_length'] = num_words_arr
 
     # Number of each reaction, shares
 
     reactions = ['react_angry', 'react_haha', 'react_like', 'react_love', 'react_sad', 'react_wow', 'shares']
+    # get categories for each reaction
     cut_to_categories(post_df, reactions, bins=5)
+
 
     # Create time
 
     time_features = ['hour', 'day', 'month']
 
     get_time_features(post_df, time_features)
-    post_df.to_csv(path_or_buf='data/fb_news_posts_features.csv',
+    # get exact value each reaction
+    post_df.to_csv(path_or_buf='../data/fb_news_posts_features_.csv',
                    index=False)
 
 
@@ -42,7 +48,7 @@ def get_time_features(df, feature_list):
 
 
 def extract_features():
-    post_df = pd.read_csv('data/fb_news_posts_features.csv')
+    post_df = pd.read_csv('../data/fb_news_posts_features.csv')
 
     post_features = {}
 
@@ -50,20 +56,35 @@ def extract_features():
     reactions = ['react_angry', 'react_haha', 'react_like', 'react_love', 'react_sad', 'react_wow', 'shares']
     react_cat = ['cat_' + i for i in reactions]
 
+    react_dict = {}
+    for i in range(len(react_cat)):
+        react_dict[react_cat[i]] = reactions[i]
+
     # created_time
     time_features = ['hour', 'day', 'month']
 
+    # all_features = ['cat_length'] + reactions + time_features
     all_features = ['cat_length'] + react_cat + time_features
 
-    all_features_val = []
+    # react_dict = {}
+    # for i in range(len(react_cat)):
+    #     react_dict[react_cat[i]] = reactions[i]
 
+
+    all_features_val = []
+    #
     for feature in all_features:
         all_features_val.extend([(feature + str(j)) for j in np.unique(post_df[feature]).tolist()])
+
+    # all_features_val=all_features
+    # print(all_features_val)
 
     sample_feature_vec = dict.fromkeys(all_features_val, 0)
     print(sample_feature_vec)
 
-    post_data = pd.read_csv('data/fb_news_posts_features.csv', dtype=str)
+    # post_data = pd.read_csv('../data/fb_news_posts_features_exact.csv', dtype=str)
+    post_data = pd.read_csv('../data/fb_news_posts_features.csv')
+    post_data['message'] = post_data['message'].astype(str)
 
     for i, row in post_data.iterrows():
         if i % 100 == 0:
@@ -72,14 +93,25 @@ def extract_features():
 
         post_features[post_id] = sample_feature_vec.copy()
         for feature in all_features:
-            post_features[post_id][feature + str(row[feature])] = 1
-            print(feature + str(row[feature]))
+            if feature in react_dict:
+                post_features[post_id][feature + str(row[feature])] = row[react_dict[feature]]
+            elif feature in time_features:
+                post_features[post_id][feature + str(row[feature])] = row[feature]
+            elif feature == 'cat_length':
+                post_features[post_id][feature + str(row[feature])] = len(row['message'].split(" "))
+            else:
+                post_features[post_id][feature + str(row[feature])] = 1
+            # post_features[post_id][feature] = row[feature]
 
-    with open('data/post_features_engineered.csv', 'w') as w:
+    with open('../data/post_features_engineered_cat_exact.csv', 'w') as w:
+        w.write('post_id' + ',' + ','.join(str(x) for x in all_features_val) + '\n')
         for post_id, features in post_features.items():
             w.write(post_id + ',' + ','.join(str(x) for x in features.values()) + '\n')
 
 
 if __name__ == "__main__":
-    prepare_post_features()
+    # prepare_post_features()
     extract_features()
+
+    # post_data = pd.read_csv('data/fb_news_posts_features.csv', dtype=str)
+

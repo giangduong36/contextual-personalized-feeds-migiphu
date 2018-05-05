@@ -7,6 +7,8 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import pandas as pd
+from sklearn.cluster import KMeans
+from tqdm import tqdm
 
 # Find three most similar posts to each post that a user has commented on
 # def tfidf_recommend_posts(user_id):
@@ -23,23 +25,59 @@ Will be fixed later for official integration with Users
 def find_most_similar_posts_tfidf(k=3):
     df = pd.read_csv('../../data/fb_news_posts_20K.csv')[['post_id', 'message']]
     df.fillna('', inplace=True)
-    tfidf = TfidfVectorizer().fit_transform(df['message'])
+    vec = TfidfVectorizer(stop_words='english')
+    tfidf = vec.fit_transform(df['message'])
     similar = []
-    for i in range(0, df.shape[0]):
+    similar_scores = []
+    for i in tqdm(range(0, df.shape[0])):
         cosine_similarities = linear_kernel(tfidf[i:i + 1], tfidf).flatten()
-        # sim_index = cosine_similarities.argsort()[-2]   # Get the most similar post
-        sim_ids = cosine_similarities.argsort()[-2:-(2 + k):-1]  # The the 3 most similar posts
+        sim_ids = cosine_similarities.argsort()[-2:-(2 + k):-1]  # The the k most similar posts
+        sim = cosine_similarities[sim_ids]
         rec_posts = []
         for sim_index in sim_ids:
-            postid = df.ix[sim_index]['post_id']
+            postid = df.iloc[sim_index]['post_id']
             rec_posts.append(postid)
         similar.append(rec_posts)
+        similar_scores.append(sim)
     df['most_similar'] = similar
+    df['most_similar_rating'] = similar_scores
     df.to_csv(path_or_buf='../../data/fb_news_posts_20K_tfidf.csv',
               index=False,
-              columns=['post_id', 'most_similar'])
+              columns=['post_id', 'most_similar', 'most_similar_rating'])
 
-    return df
+
+find_most_similar_posts_tfidf(k=9)
+
+    # df = pd.read_csv('../../data/fb_news_posts_20K.csv')[['post_id', 'message']]
+    # df.fillna('', inplace=True)
+    # vec = TfidfVectorizer(stop_words='english')
+    # tfidf = vec.fit_transform(df['message'])
+    # similar = []
+    # for i in tqdm(range(0, df.shape[0])):
+    #     cosine_similarities = linear_kernel(tfidf[i:i + 1], tfidf).flatten()
+    #     # sim_index = cosine_similarities.argsort()[-2]   # Get the most similar post
+    #     sim_ids = cosine_similarities.argsort()[-2:-(2 + k):-1]  # The the 3 most similar posts
+    #     rec_posts = []
+    #     for sim_index in sim_ids:
+    #         postid = df.ix[sim_index]['post_id']
+    #         rec_posts.append(postid)
+    #     similar.append(rec_posts)
+    # df['most_similar'] = similar
+    # df.to_csv(path_or_buf='../../data/fb_news_posts_20K_tfidf.csv',
+    #           index=False,
+    #           columns=['post_id', 'most_similar'])
+
+# number_of_clusters = 15
+# km = KMeans(n_clusters=number_of_clusters)
+# km.fit(tfidf)
+# print("Top terms per cluster:")
+# order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+# terms = vec.get_feature_names()
+# for i in range(number_of_clusters):
+#     top_ten_words = [terms[ind] for ind in order_centroids[i, :5]]
+#     print("Cluster {}: {}".format(i, ' '.join(top_ten_words)))
+
+# return df
 
 
 # def find_most_similar_tfidf(df):
@@ -60,4 +98,5 @@ def find_most_similar_posts_tfidf(k=3):
 #
 # tfidf = TfidfVectorizer().fit_transform(df['message'])
 
-# print(find_most_similar_posts_tfidf().head())
+# df = find_most_similar_posts_tfidf()
+# print(df.head())
