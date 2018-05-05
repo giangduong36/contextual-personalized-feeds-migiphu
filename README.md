@@ -88,7 +88,7 @@ Password: Hello321
 
 ## Run contextual bandit LinUCB
 
-- Populate necessary data files to `data` folder: [download[(https://1fichier.com/?qdeboefe1i)
+- Populate necessary data files to `data` folder: [download](https://1fichier.com/?qdeboefe1i)
 - Go to `recsys/recommender/` and run `python ./contextual_bandit_simulate.py` 
 - To test LinUCB on a sample dataset: do `run_sample_dataset()` in the main function of `contextual_bandit_simulate.py` file.
 - To run LinUCB on the Facebook News Dataset: using the example code, create a new sample with a size of your choice and do `run_generated_dataset`.
@@ -99,8 +99,16 @@ Password: Hello321
 - To run the Learning-To-Rank ensemble on new train, validation, and test sets:
   * Run `create_dataset_for_learning_to_rank(n_users)`
   * Follow the [documentation from The  Lemur Project](https://sourceforge.net/p/lemur/wiki/RankLib%20How%20to%20use/). 
-  
+  * Example command to train and validate on newly created data files: `java -jar RankLib.jar -train train1000.txt -validate validate1000.txt -ranker 4 -save model1000.txt -feature feature_list.txt -r 1 -i 25 -tolerance 0.001 -silent -metric2t NDCG@10 -norm zscore`
+  * Example command to test on newly created data files: `java -jar RankLib.jar -load model1000.txt -rank test1000.txt -score score1000.txt -feature feature_list.txt -norm zscore`
 
 ## Contributors:
 
 Giang Duong, Milo Beyene, Phuc Nguyen
+
+## Acknowledgement:
+
+Li, L., Chu, W., Langford, J., & Schapire, R. E. (2010). A contextual-bandit approach to personalized news article recommendation. Proceedings of the 19th International Conference on World Wide Web - WWW 10. doi:10.1145/1772690.1772758
+
+Learn to Rank: Implementation RankLib from [the LEMUR project](https://sourceforge.net/p/lemur/wiki/Home/)
+
